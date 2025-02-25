@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"sourcefile.h": "c",
+		"asm_parser.h": "c",
+		"meats.h": "c"
+	}
+}
