@@ -5,19 +5,33 @@
 
 void execute_HALT(MeatsVM *vm)
 {
-	switch (vm_get_register(vm, 31))
+	uint64_t ret = vm_get_register(vm, 31);
+	switch (ret)
 	{
 	case 0:
 	{
-		exit(0);
+		exit(ret);
+		break;
+	}
+	case 1:
+	{
+		meats_vm_print_asm(vm);
+		exit(ret);
+		break;
+	}
+	case 2:
+	{
+		meats_vm_dump_bytecode(vm);
+		meats_vm_dump_registers(vm);
+		exit(ret);
 		break;
 	}
 	default:
 	{
-		meats_vm_dump_bytecode(vm);
 		meats_vm_dump_registers(vm);
+		meats_vm_dump_bytecode(vm);
 		meats_vm_print_asm(vm);
-		exit(vm_get_register(vm, 31));
+		exit(ret);
 	}
 	}
 }

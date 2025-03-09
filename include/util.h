@@ -26,7 +26,10 @@ uint8_t str_to_uint8(const char *str);
 uint16_t str_to_uint16(const char *str);
 uint32_t str_to_uint32(const char *str);
 uint64_t str_to_uint64(const char *str);
+size_t str_to_size_t(const char *str);
+
 void print_bits(uint64_t num);
+void print_bytes(uint8_t *data, size_t size);
 
 char *read_line(char terminator);
 char *copy_string(const char *str);

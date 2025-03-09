@@ -10,8 +10,7 @@ MeatsArray *meats_array_new(size_t size_of_element)
 }
 MeatsArray *meats_array_create(size_t size_of_element, size_t initial_capacity)
 {
-	// Allocate memory for the MeatsArray struct
-	MeatsArray *array = (MeatsArray *)malloc(sizeof(MeatsArray));
+	MeatsArray *array = malloc(sizeof(MeatsArray));
 	if (!array)
 	{
 		perror("Failed to allocate memory for MeatsArray");
@@ -55,16 +54,17 @@ void meats_array_add(MeatsArray *array, void *element)
 
 void meats_array_remove(MeatsArray *array, void *element)
 {
-	TODO("implement remove of element by data or index");
-	UNUSED(array);
+	TODO("implement remove of element by data");
 	UNUSED(element);
+	array->Count--;
 }
 
 void *meats_array_get(MeatsArray *array, size_t index)
 {
 	if (index >= array->Count)
 	{
-		return NULL; // Return NULL for out-of-bounds access
+		printf("OUT OF BOUNDS ACCESS VIOLATION => %p\n", (void *)array);
+		exit(3);
 	}
 	return (char *)array->elements + (index * array->size_of_element);
 }

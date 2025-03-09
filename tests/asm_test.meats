@@ -1,6 +1,11 @@
 asm 
 {
-	MOV r0 1
+	MOVE r8 44
+	MOVE r7 30
+	MOVE r0 8192000
+	ADD  r1 1
+	JMPE r0 r1
+	JMP
+	MOV r31 1
 	HALT
-	255
 }

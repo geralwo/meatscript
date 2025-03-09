@@ -7,26 +7,26 @@
 #include "vm/instruction_set.h"
 #include "util.h"
 
-void (*execute_table[MAX_OPCODES])(MeatsVM *vm) = {
-	[0x00] = execute_NOP,
-	[0xDA] = execute_MOV,
-	[0xDB] = execute_MOVI,
-	[0xDC] = execute_MOVE,
-	[0xAA] = execute_ADD,
-	[0xFF] = execute_JMPE,
-	[0xFA] = execute_JMP,
-	[0xE0] = execute_HALT,
+void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
+    [0x00] = execute_NOP,
+    [0xDA] = execute_MOV,
+    [0xDB] = execute_MOVI,
+    [0xDC] = execute_MOVE,
+    [0xAA] = execute_ADD,
+    [0xFF] = execute_JMPE,
+    [0xFA] = execute_JMP,
+    [0xE0] = execute_HALT,
 };
 
-void (*disasm_table[MAX_OPCODES])(MeatsVM *vm) = {
-	[0x00] = disasm_NOP,
-	[0xDA] = disasm_MOV,
-	[0xDB] = disasm_MOVI,
-	[0xDC] = disasm_MOVE,
-	[0xAA] = disasm_ADD,
-	[0xFF] = disasm_JMPE,
-	[0xFA] = disasm_JMP,
-	[0xE0] = disasm_HALT,
+void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
+    [0x00] = disasm_NOP,
+    [0xDA] = disasm_MOV,
+    [0xDB] = disasm_MOVI,
+    [0xDC] = disasm_MOVE,
+    [0xAA] = disasm_ADD,
+    [0xFF] = disasm_JMPE,
+    [0xFA] = disasm_JMP,
+    [0xE0] = disasm_HALT,
 };
 
 MeatsVM *meats_vm_new(Bytecode *bc)
@@ -42,11 +42,12 @@ void meats_vm_init(MeatsVM *vm)
 {
 	for (int i = 0; i < VM_REGISTER_COUNT; i++)
 		vm->Registers[i] = 0;
-	vm->Registers[RR] = 1; // enable the vm, RR = register 31
+	vm->Registers[31] = 42; // debug vm
 	for (int i = 0; i < VM_STACK_SIZE; i++)
 		vm->Stack[i] = 0;
 	vm->Heap = malloc(VM_HEAP_START_SIZE);
 	vm->Program = NULL;
+	vm->ProgramLength = 0;
 }
 
 uint8_t fetch(MeatsVM *vm)
@@ -76,7 +77,7 @@ void meats_vm_run(MeatsVM *vm)
 		uint8_t opcode = fetch(vm);
 		if (execute_table[opcode])
 		{
-			// printf("Executing 0x%.2X:\n",opcode);
+			// printf(" Executing 0x%.2X [%ld]:\n", vm->PC, opcode);
 			execute_table[opcode](vm);
 		}
 		else
@@ -102,6 +103,7 @@ void meats_vm_dump_registers(MeatsVM *vm)
 			printf("\n");
 	}
 }
+void meats_vm_dump_mem(MeatsVM *vm);
 
 void meats_vm_dump_mem(MeatsVM *vm)
 {
@@ -157,4 +159,9 @@ void meats_vm_dump_bytecode(MeatsVM *vm)
 		}
 		printf("\n");
 	}
+}
+
+void meats_vm_print_stats(MeatsVM *vm)
+{
+	printf("Bytecode Size: %ld\tR31: %ld\nHeapPtr: %p\tHeapSize: %ld", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
 }

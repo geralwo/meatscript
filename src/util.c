@@ -5,6 +5,7 @@
 #include <inttypes.h> // For PRIu64 format specifier
 #include <string.h>
 #include "sourcefile.h"
+#include "util.h"
 
 // Converts string to uint8_t
 uint8_t str_to_uint8(const char *str)
@@ -251,4 +252,21 @@ char *read_line(char terminator)
 	}
 
 	return line;
+}
+
+void print_bytes(uint8_t *data, size_t size)
+{
+	if (size > 0)
+	{
+		// printf("Bytecode bytes:\n");
+		for (size_t i = 0; i < size; i++)
+		{
+			printf(" %02x ", data[i]);
+			if ((i + 1) % 16 == 0)
+			{
+				printf("\n");
+			}
+		}
+		printf("\n");
+	}
 }

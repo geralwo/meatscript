@@ -13,8 +13,8 @@
 typedef struct
 {
 	uint64_t Registers[VM_REGISTER_COUNT]; // General-purpose registers
-	uint8_t Stack[VM_STACK_SIZE];		   // Stack
-	size_t PC;							   // Program Counter
+	uint8_t Stack[VM_STACK_SIZE];	       // Stack
+	size_t PC;			       // Program Counter
 	size_t ProgramLength;
 	uint8_t *Program;
 	size_t HeapSize;
@@ -63,4 +63,5 @@ void meats_vm_run(MeatsVM *vm);
 void meats_vm_dump_registers(MeatsVM *vm);
 void meats_vm_dump_bytecode(MeatsVM *vm);
 void meats_vm_print_asm(MeatsVM *vm);
+void meats_vm_print_stats(MeatsVM *vm);
 #endif // VM_H

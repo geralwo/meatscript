@@ -7,49 +7,110 @@
 #include "vm/bytecode.h"
 #include "vm/instruction_set.h"
 #include "util.h"
+#include "parser.h"
+#include "ast_node.h"
 #include "asm_parser.h"
+#include "stdlib/std_array.h"
+#include "stdlib/std_malloc.h"
 
 int main(int argc, char *argv[])
 {
-	MeatsVM vm;
 
+	MeatsVM vm;
+	_meat_mem_init();
+	meats_vm_init(&vm);
+	vm.HeapSize = MEAT_MEM_POOL.Size;
+	vm.Heap = MEAT_MEM_POOL.Data;
+	meats_vm_print_stats(&vm);
 	if (argc < 2)
 	{
 		printf("mobile, easy and typed script compiler\n");
-		printf("Usage: %s file.meats\n", argv[0]);
+		printf("Usage: %s <file>\n", argv[0]);
+		printf("Usage: %s repl_asm\n", argv[0]);
 		return 1;
 	}
-	if (strcmp("repl", argv[1]) == 0)
+	if (strcmp("repl_asm", argv[1]) == 0)
 	{
 		Bytecode repl_init;
 		bytecode_init(&repl_init);
 
 		// bytecode_append(&repl_init, bytecode_MOV(31, 0), MOV_INSTR_SIZE);
 		// bytecode_append(&repl_init, bytecode_HALT(), HALT_INSTR_SIZE);
-		char *repl_input = read_line(EOF);
-		Lexer repl_lexer;
-		lexer_init(&repl_lexer, repl_input, strlen(repl_input));
-		// printf("%s\n", repl_input);
-		lexer_tokenize(&repl_lexer);
-		ASM_Parser asm_parser;
-		asm_parser_init(&asm_parser, repl_lexer.Tokens);
-		asm_parser_parse(&asm_parser);
-		bytecode_append(&repl_init, asm_parser.Bytecode->bytes, asm_parser.Bytecode->size);
-		meats_vm_init(&vm);
-		vm.ProgramLength = repl_init.size;
-		vm.Program = repl_init.bytes;
-		meats_vm_dump_bytecode(&vm);
-		meats_vm_run(&vm);
-		meats_vm_dump_registers(&vm);
-		// meats_vm_dump_bytecode(&vm);
-		meats_vm_print_asm(&vm);
+		while (1)
+		{
+			printf(">");
+			char *repl_input = read_line('\n');
+			Lexer repl_lexer;
+			lexer_init(&repl_lexer, repl_input, strlen(repl_input));
+			// printf("%s\n", repl_input);
+			lexer_tokenize(&repl_lexer);
+			ASM_Parser asm_parser;
+			asm_parser_init(&asm_parser, repl_lexer.Tokens);
+			asm_parser_parse(&asm_parser);
+			bytecode_append(&repl_init, asm_parser.Bytecode->bytes, asm_parser.Bytecode->size);
+
+			vm.ProgramLength = repl_init.size;
+			vm.Program = repl_init.bytes;
+			// meats_vm_dump_bytecode(&vm);
+			meats_vm_run(&vm);
+		}
+		// printf("\n>");
+		// char *repl_input = read_line(EOF);
+		// Lexer repl_lexer;
+		// lexer_init(&repl_lexer, repl_input, strlen(repl_input));
+		// // printf("%s\n", repl_input);
+		// lexer_tokenize(&repl_lexer);
+		// ASM_Parser asm_parser;
+		// asm_parser_init(&asm_parser, repl_lexer.Tokens);
+		// asm_parser_parse(&asm_parser);
+		// bytecode_append(&repl_init, asm_parser.Bytecode->bytes, asm_parser.Bytecode->size);
+
+		// vm.ProgramLength = repl_init.size;
+		// vm.Program = repl_init.bytes;
+		// // meats_vm_dump_bytecode(&vm);
+		// meats_vm_run(&vm);
+		// // meats_vm_dump_registers(&vm);
+		// //  meats_vm_dump_bytecode(&vm);
+		// // meats_vm_print_asm(&vm);
 	}
 	else
 	{
-		TODO("implement parsing from file\n");
-		SourceFile *source_file = read_file(argv[1]);
-		printf("content of '%s':\n----\n%s\n----\n", source_file->file_name, source_file->source_code);
+		Bytecode program;
+		bytecode_init(&program);
+
+		SourceFile *source_code = read_file(argv[1]);
+		printf("Source Code '%s':\n------\n%s\n------\n",
+		       source_code->file_name,
+		       source_code->source_code);
+		Lexer lexer;
+		lexer_init(&lexer, source_code->source_code, source_code->file_size);
+		lexer_tokenize(&lexer);
+		printf("Lexer finished:\n");
+		printf("Token count: %ld\n", lexer.Tokens->Count);
+		Parser parser;
+		parser_init(&parser, &lexer);
+		parser_parse(&parser);
+		for (size_t i = 0; i < parser.AST->Count; i++)
+		{
+			AST_Node *node = meats_array_get(parser.AST, i);
+			if (node->Bytecode)
+				bytecode_append(&program, node->Bytecode->bytes, node->Bytecode->size);
+			else
+				exit(13);
+		}
+		// printf("Program Bytecode (len: %ld):\n", program.size);
+		// print_bytes(program.bytes, program.size);
+
+		vm.Program = program.bytes;
+		vm.ProgramLength = program.size;
+		// meats_vm_dump_bytecode(&vm);
+		meats_vm_run(&vm);
+		// meats_vm_dump_registers(&vm);
+		//  meats_vm_dump_bytecode(&vm);
+		// meats_vm_print_asm(&vm);
+		meats_vm_print_stats(&vm);
+		return vm.Registers[31];
 	}
 
-	return 0;
+	return 2;
 }

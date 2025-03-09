@@ -51,14 +51,17 @@ void bytecode_dump(Bytecode *bc)
 {
     printf("Bytecode size: %zu\n", bc->size);
     printf("Bytecode capacity: %zu\n", bc->capacity);
-    printf("Bytecode bytes:\n");
-    for (size_t i = 0; i < bc->size; i++)
+    if (bc->size > 0)
     {
-        printf("  %02x ", bc->bytes[i]);
-        if ((i + 1) % 16 == 0)
+        printf("Bytecode bytes:\n");
+        for (size_t i = 0; i < bc->size; i++)
         {
-            printf("\n");
+            printf(" %02x ", bc->bytes[i]);
+            if ((i + 1) % 16 == 0)
+            {
+                printf("\n");
+            }
         }
+        printf("\n");
     }
-    printf("\n");
 }

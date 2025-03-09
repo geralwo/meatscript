@@ -2,18 +2,21 @@
 #include "vm/instruction_set.h"
 #include <stdio.h>
 
-void execute_NOP()
+void execute_NOP(MeatsVM *vm)
 {
+	(void)vm;
 	return;
 }
 
-void disasm_NOP()
+void disasm_NOP(MeatsVM *vm)
 {
+	(void)vm;
 	printf("NULL\n");
 }
 
-uint8_t* bytecode_NOP()
+uint8_t *bytecode_NOP(MeatsVM *vm)
 {
+	(void)vm;
 	static uint8_t bytecode[NOP_INSTR_SIZE];
 	bytecode[0] = 0x00;
 	return bytecode;

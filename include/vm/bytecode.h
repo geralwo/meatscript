@@ -11,12 +11,9 @@ typedef struct
 } Bytecode;
 
 void bytecode_init(Bytecode *bc);
-Bytecode *new_bytecode();
-void free_bytecode();
+Bytecode *new_bytecode(void);
+void free_bytecode(Bytecode *bc);
 void bytecode_append(Bytecode *bc, uint8_t *data, size_t size);
-void bytecode_append_bc(Bytecode *dest, Bytecode *src);
-void bytecode_create_label(Bytecode *bc, const char *name);
-size_t bytecode_get_label(Bytecode *bc, const char *name);
 void bytecode_dump(Bytecode *bc);
 
 #endif // BYTECODE_H

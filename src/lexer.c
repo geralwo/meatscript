@@ -154,6 +154,15 @@ void lexer_tokenize(Lexer *lexer)
 			TODO("implement square brackets");
 			lexer_advance(lexer);
 		}
+		else if (c == '#')
+		{
+			token = new_token(TOKEN_HASH);
+			token.Value = "#";
+			token.line = lexer->line;
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
 		else if (isspace(c))
 		{
 			lexer_advance(lexer);

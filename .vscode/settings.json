@@ -2,6 +2,18 @@
 	"files.associations": {
 		"sourcefile.h": "c",
 		"asm_parser.h": "c",
-		"meats.h": "c"
+		"meats.h": "c",
+		"instruction_set.h": "c",
+		"string.h": "c",
+		"stdint.h": "c",
+		"bytecode.h": "c",
+		"token.h": "c",
+		"std_array.h": "c",
+		"array": "cpp",
+		"string_view": "cpp",
+		"initializer_list": "cpp",
+		"std_malloc.h": "c",
+		"util.h": "c",
+		"stdlib.h": "c"
 	}
 }

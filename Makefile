@@ -1,9 +1,10 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror=return-type -g -std=c11 -pedantic -Iinclude
-
+# CFLAGS = -std=c17 -Wall -Wextra -Werror -g -pedantic -Iinclude -O0
+CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -Iinclude -O2
+# -Wstrict-prototypes -Wmissing-prototypes
 # Source and output
-SRC = src/meats.c src/util.c src/asm_parser.c src/lexer.c src/stdlib/*.c src/vm/*.c src/vm/instructions/*.c
+SRC = src/meats.c src/util.c src/parser.c src/asm_parser.c src/lexer.c src/stdlib/*.c src/vm/*.c src/vm/instructions/*.c
 OUTPUT = build/meats
 
 # Build target

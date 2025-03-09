@@ -1,0 +1,7 @@
+asm 
+{
+	:MAIN
+	MOVE r0 8192000
+	MOV r31 0
+	HALT
+}
