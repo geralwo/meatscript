@@ -13,14 +13,15 @@ void execute_HALT(MeatsVM *vm)
 		exit(ret);
 		break;
 	}
-	case 1:
+	case 250:
 	{
 		meats_vm_print_asm(vm);
 		exit(ret);
 		break;
 	}
-	case 2:
+	case 251:
 	{
+		meats_vm_print_asm(vm);
 		meats_vm_dump_bytecode(vm);
 		meats_vm_dump_registers(vm);
 		exit(ret);
@@ -29,8 +30,8 @@ void execute_HALT(MeatsVM *vm)
 	default:
 	{
 		meats_vm_dump_registers(vm);
-		meats_vm_dump_bytecode(vm);
-		meats_vm_print_asm(vm);
+		// meats_vm_dump_bytecode(vm);
+		// meats_vm_print_asm(vm);
 		exit(ret);
 	}
 	}

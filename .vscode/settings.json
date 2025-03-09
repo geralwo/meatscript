@@ -14,6 +14,8 @@
 		"initializer_list": "cpp",
 		"std_malloc.h": "c",
 		"util.h": "c",
-		"stdlib.h": "c"
+		"stdlib.h": "c",
+		"stddef.h": "c",
+		"inttypes.h": "c"
 	}
 }

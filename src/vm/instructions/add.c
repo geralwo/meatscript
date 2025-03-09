@@ -1,5 +1,6 @@
 #include "vm.h"
 #include "vm/instruction_set.h"
+#include "stdlib/std_print.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,7 @@ void disasm_ADD(MeatsVM *vm)
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t value = vm_bytes_to_uint64(bytes);
 	printf("ADD r%u %ld\n", reg, value);
+	meats_print("ADD r%u %ld\n", reg, value);
 }
 
 uint8_t *bytecode_ADD(uint8_t reg, uint64_t value)

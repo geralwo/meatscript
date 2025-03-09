@@ -6,6 +6,6 @@ asm
 	ADD  r1 1
 	JMPE r0 r1
 	JMP
-	MOV r31 1
+	MOV r31 251
 	HALT
 }

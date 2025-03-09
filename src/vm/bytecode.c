@@ -65,3 +65,21 @@ void bytecode_dump(Bytecode *bc)
         printf("\n");
     }
 }
+
+void write_bytecode_to_file(const char *filename, const uint8_t *bytecode, size_t length)
+{
+    FILE *file = fopen(filename, "wb"); // Open file in binary write mode
+    if (!file)
+    {
+        perror("Failed to open file for writing");
+        return;
+    }
+
+    size_t written = fwrite(bytecode, sizeof(uint8_t), length, file);
+    if (written != length)
+    {
+        perror("Failed to write all bytecode data");
+    }
+
+    fclose(file);
+}

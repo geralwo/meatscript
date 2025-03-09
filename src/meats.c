@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	vm.HeapSize = MEAT_MEM_POOL.Size;
 	vm.Heap = MEAT_MEM_POOL.Data;
 	meats_vm_print_stats(&vm);
+	char *binary_file_name = NULL;
 	if (argc < 2)
 	{
 		printf("mobile, easy and typed script compiler\n");
@@ -29,6 +30,19 @@ int main(int argc, char *argv[])
 		printf("Usage: %s repl_asm\n", argv[0]);
 		return 1;
 	}
+	else if (argc > 2)
+	{
+		for (int i = 0; i < argc; i++)
+		{
+			if (strcmp("-o", argv[i]) == 0)
+			{
+				if ((i + 1) >= argc)
+					return 1;
+				binary_file_name = argv[i + 1];
+			}
+		}
+	}
+
 	if (strcmp("repl_asm", argv[1]) == 0)
 	{
 		Bytecode repl_init;
@@ -103,6 +117,10 @@ int main(int argc, char *argv[])
 
 		vm.Program = program.bytes;
 		vm.ProgramLength = program.size;
+		if (binary_file_name != NULL)
+		{
+			write_bytecode_to_file(binary_file_name, vm.Program, vm.ProgramLength);
+		}
 		// meats_vm_dump_bytecode(&vm);
 		meats_vm_run(&vm);
 		// meats_vm_dump_registers(&vm);

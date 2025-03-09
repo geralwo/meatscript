@@ -15,5 +15,5 @@ Bytecode *new_bytecode(void);
 void free_bytecode(Bytecode *bc);
 void bytecode_append(Bytecode *bc, uint8_t *data, size_t size);
 void bytecode_dump(Bytecode *bc);
-
+void write_bytecode_to_file(const char *filename, const uint8_t *bytecode, size_t length);
 #endif // BYTECODE_H
