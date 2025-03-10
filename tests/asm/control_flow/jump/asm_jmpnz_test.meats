@@ -1,0 +1,8 @@
+
+asm
+{
+	JMPNZ r30 16
+	NOP NOP NOP NOP NOP NOP NOP
+	MOV r30 0
+	HALT
+}

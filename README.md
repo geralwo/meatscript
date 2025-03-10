@@ -12,6 +12,10 @@
 		- MOD [✅]
 	- Control Flow [❌]
 		- ASM Labels [❌]
+		- JMP [✅]
+		- JMPZ [✅]
+		- JMPNZ [✅]
+		- JMPE [✅]
 	- Function Call [❌]
 - ASM Parser
 	- Comment Token ';' [✅]

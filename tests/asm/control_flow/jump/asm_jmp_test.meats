@@ -1,0 +1,7 @@
+asm
+{
+	JMP 16
+	NOP NOP NOP NOP NOP NOP NOP
+	MOV r30 0
+	HALT
+}

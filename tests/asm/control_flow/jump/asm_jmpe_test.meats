@@ -1,0 +1,8 @@
+
+asm
+{
+	JMPE r0 r1 16
+	NOP NOP NOP NOP NOP NOP
+	MOV r30 0
+	HALT
+}
