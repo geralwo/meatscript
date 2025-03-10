@@ -11,7 +11,7 @@ void execute_DIV(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t value = vm_bytes_to_uint64(bytes);
-	vm_set_register(vm, reg, vm_get_register(vm, reg) / value);
+	vm_set_register(vm, reg, (vm_get_register(vm, reg) / value));
 }
 
 void disasm_DIV(MeatsVM *vm)

@@ -1,9 +1,0 @@
-asm 
-{
-	DEBUG 1			; enable debug output
-	MOVE r1 81920000	; put big value in register 1
-	ADD  r2 1		; add 1 to register 2
-	JMPE r1 r2 49		; jump to 32 if register 1 is equal to register 2 
-	JMP 19			; jump to 10
-	HALT			; end program
-}

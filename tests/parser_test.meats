@@ -1,6 +1,5 @@
-var x = 10;
-var y = 10
-
-var z = x + y
-
-print z
+asm
+{
+	MOV r30 0
+	HALT
+}

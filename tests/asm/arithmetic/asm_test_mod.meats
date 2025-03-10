@@ -1,0 +1,12 @@
+asm
+{
+	MOVE r1 0
+	MOVE r2 2
+	MOD r2 2
+	JMPE r1 r2 54	; 41
+	MOV r30 1	; 44
+	DEBUG 1		; 53
+	HALT		; 54
+	MOV r30 0
+	HALT
+}
