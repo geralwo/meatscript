@@ -21,6 +21,23 @@ uint64_t vm_get_register(MeatsVM *vm, uint8_t reg)
     return 0;
 }
 
+void vm_set_flag(MeatsVM *vm, uint64_t flag)
+{
+    vm->Registers[31] |= flag;
+}
+
+// Unset (clear) a flag inside register 31
+void vm_unset_flag(MeatsVM *vm, uint64_t flag)
+{
+    vm->Registers[31] &= ~flag;
+}
+
+// Check if a flag is set
+int vm_flag_is_set(MeatsVM *vm, uint64_t flag)
+{
+    return (vm->Registers[31] & flag) != 0;
+}
+
 size_t vm_bytes_to_size_t(const uint8_t bytes[], size_t byte_count)
 {
     size_t value = 0;

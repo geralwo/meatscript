@@ -121,14 +121,14 @@ int main(int argc, char *argv[])
 		bytecode_init(&program);
 
 		SourceFile *source_code = read_file(argv[1]);
-		printf("Source Code '%s':\n------\n%s\n------\n",
-		       source_code->file_name,
-		       source_code->source_code);
+		// printf("Source Code '%s':\n------\n%s\n------\n",
+		//        source_code->file_name,
+		//        source_code->source_code);
 		Lexer lexer;
 		lexer_init(&lexer, source_code->source_code, source_code->file_size);
 		lexer_tokenize(&lexer);
-		printf("Lexer finished:\n");
-		printf("Token count: %ld\n", lexer.Tokens->Count);
+		// printf("Lexer finished:\n");
+		// printf("Token count: %ld\n", lexer.Tokens->Count);
 		Parser parser;
 		parser_init(&parser, &lexer);
 		parser_parse(&parser);
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 		// meats_vm_dump_registers(&vm);
 		//  meats_vm_dump_bytecode(&vm);
 		// meats_vm_print_asm(&vm);
-		meats_vm_print_stats(&vm);
+		// meats_vm_print_stats(&vm);
 		return vm.Registers[31];
 	}
 

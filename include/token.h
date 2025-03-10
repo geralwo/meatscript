@@ -13,6 +13,7 @@ typedef enum
     TOKEN_LBRACE,
     TOKEN_RBRACE,
     TOKEN_HASH,
+    TOKEN_SEMICOLON,
     TOKEN_EOL,
     TOKEN_EOF,
     TOKEN_ANY,
@@ -65,6 +66,8 @@ static inline const char *tokenType_name(TokenType type)
         return "RBRACE";
     case TOKEN_LBRACE:
         return "LBRACE";
+    case TOKEN_SEMICOLON:
+        return "SEMICOLON";
     default:
         return "UNKNOWN";
     }

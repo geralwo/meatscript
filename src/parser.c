@@ -67,7 +67,7 @@ Token *current_token(Parser *parser)
 // Parser Utility Functions End
 AST_Node *parse_asm(Parser *parser)
 {
-	printf("parsing assembly... ");
+	printf("parsing assembly...\n");
 	AST_Node *node = new_ast_node(AST_INLINE_ASM);
 	MeatsArray *asm_tokens = meats_array_new(sizeof(Token));
 	while (current_token(parser)->Type != TOKEN_LBRACE)
@@ -82,10 +82,7 @@ AST_Node *parse_asm(Parser *parser)
 			printf("Error: Unexpected EOF while parsing asm block\n");
 			return NULL;
 		}
-		if (current_token(parser)->Type != TOKEN_EOL)
-		{
-			meats_array_add(asm_tokens, current_token(parser));
-		}
+		meats_array_add(asm_tokens, current_token(parser));
 		parser_advance(parser);
 	}
 	parser_advance(parser);
@@ -165,5 +162,5 @@ void parser_parse(Parser *parser)
 		meats_array_add(parser->AST, statement);
 		// printf("added node '%p' to ast\n", (void *)statement);
 	}
-	printf(":: Parsing complete\n");
+	// printf(":: Parsing complete\n");
 }

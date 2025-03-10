@@ -7,6 +7,11 @@
 #define VM_STACK_SIZE 16384
 #define VM_HEAP_START_SIZE 4096
 
+#define VM_FLAG_ZERO (1ULL << 0)
+#define VM_FLAG_OVERFLOW (1ULL << 1)
+#define VM_FLAG_HALT (1ULL << 63)
+#define VM_FLAG_PRINT_DEBUG (1ULL << 42)
+
 #define VM_FETCH_BUFFER_SIZE sizeof(size_t)
 #include "vm/bytecode.h"
 
@@ -22,21 +27,6 @@ typedef struct
 
 } MeatsVM;
 
-#define R0 0
-#define R1 1
-#define R2 2
-#define R3 3
-#define R4 4
-#define R5 5
-#define R6 6
-#define R7 7
-#define R8 8
-#define R9 9
-#define R10 10
-#define R11 11
-#define R22 22
-#define RR 31
-
 uint8_t fetch(MeatsVM *vm);
 void fetch_bytes(MeatsVM *vm, uint8_t *dest, size_t size);
 
@@ -50,18 +40,27 @@ uint8_t *vm_uint64_to_bytes(uint64_t value);
 uint8_t *vm_uint32_to_bytes(uint32_t value);
 uint8_t *vm_uint16_to_bytes(uint16_t value);
 
-// Function to set a register's value
+// Function to manipulate registers
 void vm_set_register(MeatsVM *vm, uint8_t reg, uint64_t value);
-
-// Function to get a register's value
 uint64_t vm_get_register(MeatsVM *vm, uint8_t reg);
+
+// Function to set set Flags
+
+void vm_set_flag(MeatsVM *vm, uint64_t flag);
+void vm_unset_flag(MeatsVM *vm, uint64_t flag);
+int vm_flag_is_set(MeatsVM *vm, uint64_t flag);
 
 // Function to initialize the VM
 void meats_vm_init(MeatsVM *vm);
 MeatsVM *meats_vm_new(Bytecode *bc);
+
+// Functions to run VM
 void meats_vm_run(MeatsVM *vm);
+
+// Functions to debug VM
 void meats_vm_dump_registers(MeatsVM *vm);
 void meats_vm_dump_bytecode(MeatsVM *vm);
 void meats_vm_print_asm(MeatsVM *vm);
 void meats_vm_print_stats(MeatsVM *vm);
+
 #endif // VM_H

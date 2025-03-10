@@ -1,37 +1,10 @@
-#include "vm.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-
+#include "vm.h"
 #include "vm/instruction_set.h"
 #include "util.h"
-
-void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
-    [0x00] = execute_NOP,
-    [0xDA] = execute_MOV,
-    [0xDB] = execute_MOVI,
-    [0xDC] = execute_MOVE,
-    [0xAA] = execute_ADD,
-    [0xFF] = execute_JMPE,
-    [0xFA] = execute_JMP,
-    [0xE0] = execute_HALT,
-    [0xC0] = execute_PUSH,
-    [0xC1] = execute_POP,
-};
-
-void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
-    [0x00] = disasm_NOP,
-    [0xDA] = disasm_MOV,
-    [0xDB] = disasm_MOVI,
-    [0xDC] = disasm_MOVE,
-    [0xAA] = disasm_ADD,
-    [0xFF] = disasm_JMPE,
-    [0xFA] = disasm_JMP,
-    [0xE0] = disasm_HALT,
-    [0xC0] = disasm_PUSH,
-    [0xC1] = disasm_POP,
-};
 
 MeatsVM *meats_vm_new(Bytecode *bc)
 {
@@ -46,7 +19,7 @@ void meats_vm_init(MeatsVM *vm)
 {
 	for (int i = 0; i < VM_REGISTER_COUNT; i++)
 		vm->Registers[i] = 0;
-	vm->Registers[31] = 42; // debug vm
+	vm->Registers[31] = 42;
 	for (int i = 0; i < VM_STACK_SIZE; i++)
 		vm->Stack[i] = 0;
 	vm->Heap = malloc(VM_HEAP_START_SIZE);
@@ -81,7 +54,7 @@ void meats_vm_run(MeatsVM *vm)
 		uint8_t opcode = fetch(vm);
 		if (execute_table[opcode])
 		{
-			// printf(" Executing 0x%.2X [%ld]:\n", vm->PC, opcode);
+			// printf(" Executing 0x%.2X [%ld]:\n", opcode, vm->PC);
 			execute_table[opcode](vm);
 		}
 		else
@@ -92,6 +65,7 @@ void meats_vm_run(MeatsVM *vm)
 			exit('r' + 't');
 		}
 	}
+	printf("EXITED WITH NO HALT");
 }
 
 void meats_vm_dump_registers(MeatsVM *vm)
@@ -167,5 +141,6 @@ void meats_vm_dump_bytecode(MeatsVM *vm)
 
 void meats_vm_print_stats(MeatsVM *vm)
 {
-	printf("Bytecode Size: %ld\tR31: %ld\nHeapPtr: %p\tHeapSize: %ld", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
+	printf("Bytecode Size: %ld\tR31: %ld\nHeapPtr: %p\tHeapSize: %ld\n", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
+	meats_vm_print_asm(vm);
 }

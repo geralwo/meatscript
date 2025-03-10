@@ -13,12 +13,23 @@ typedef uint8_t OpCode;
 
 #define OP_NOP 0x00
 #define OP_HALT 0xE0
+#define OP_DEBUG 0xED
+
 #define OP_MOV 0xDA
 #define OP_MOVI 0xDB
 #define OP_MOVE 0xDC
+
 #define OP_ADD 0xAA
+#define OP_SUB 0xA0
+#define OP_MUL 0xA2
+#define OP_DIV 0xA3
+#define OP_MOD 0xA1
+
 #define OP_JMP 0xFA
 #define OP_JMPE 0xFF
+#define OP_JMPZ 0xF0
+#define OP_JMPNZ 0xF1
+
 #define OP_PUSH 0xC0
 #define OP_POP 0xC1
 
@@ -29,6 +40,11 @@ extern void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm);
 void execute_NOP(MeatsVM *vm);
 void disasm_NOP();
 uint8_t *bytecode_NOP();
+
+#define DEBUG_INSTR_SIZE (1 + sizeof(uint64_t))
+void execute_DEBUG(MeatsVM *vm);
+void disasm_DEBUG(MeatsVM *vm);
+uint8_t *bytecode_DEBUG(uint64_t debug_flags);
 
 #define HALT_INSTR_SIZE 1
 void execute_HALT(MeatsVM *vm);
@@ -55,15 +71,45 @@ void execute_ADD(MeatsVM *vm);
 void disasm_ADD(MeatsVM *vm);
 uint8_t *bytecode_ADD(uint8_t reg, uint64_t value);
 
-#define JMP_INSTR_SIZE (sizeof(OpCode))
-void execute_JMP(MeatsVM *vm);
-void disasm_JMP();
-uint8_t *bytecode_JMP();
+#define SUB_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_SUB(MeatsVM *vm);
+void disasm_SUB(MeatsVM *vm);
+uint8_t *bytecode_SUB(uint8_t reg, uint64_t value);
 
-#define JMPE_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define MUL_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_MUL(MeatsVM *vm);
+void disasm_MUL(MeatsVM *vm);
+uint8_t *bytecode_MUL(uint8_t reg, uint64_t value);
+
+#define DIV_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_DIV(MeatsVM *vm);
+void disasm_DIV(MeatsVM *vm);
+uint8_t *bytecode_DIV(uint8_t reg, uint64_t value);
+
+#define MOD_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_MOD(MeatsVM *vm);
+void disasm_MOD(MeatsVM *vm);
+uint8_t *bytecode_MOD(uint8_t reg, uint64_t value);
+
+#define JMP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
+void execute_JMP(MeatsVM *vm);
+void disasm_JMP(MeatsVM *vm);
+uint8_t *bytecode_JMP(uint64_t address);
+
+#define JMPZ_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_JMPZ(MeatsVM *vm);
+void disasm_JMPZ(MeatsVM *vm);
+uint8_t *bytecode_JMPZ(uint8_t reg, uint64_t address);
+
+#define JMPNZ_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+void execute_JMPNZ(MeatsVM *vm);
+void disasm_JMPNZ(MeatsVM *vm);
+uint8_t *bytecode_JMPNZ(uint8_t reg, uint64_t address);
+
+#define JMPE_INSTR_SIZE (sizeof(OpCode) + 1 + 1 + +sizeof(uint64_t))
 void execute_JMPE(MeatsVM *vm);
 void disasm_JMPE(MeatsVM *vm);
-uint8_t *bytecode_JMPE(uint8_t reg1, uint8_t reg2);
+uint8_t *bytecode_JMPE(uint8_t reg1, uint8_t reg2, uint64_t address);
 
 #define PUSH_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
 void execute_PUSH(MeatsVM *vm);

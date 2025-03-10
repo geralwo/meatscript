@@ -4,11 +4,11 @@
 #include <stdint.h>
 void execute_POP(MeatsVM *vm)
 {
-	TODO("POP %u\n", fetch(vm));
+	TODO("POP r%u\n", fetch(vm));
 }
 void disasm_POP(MeatsVM *vm)
 {
-	printf("POP %u\n", fetch(vm));
+	printf("POP r%u\n", fetch(vm));
 }
 uint8_t *bytecode_POP(uint8_t reg)
 {

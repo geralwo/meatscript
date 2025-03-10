@@ -1,7 +1,12 @@
 asm 
 {
 	:MAIN
-	MOVE r0 8192000
-	MOV r31 2
+	MOVE r1 8192000
+	:ADD
+	ADD r2 1
+	JMPE r1 r2 :END
+	JMP :ADD
+	:END
+	MOV r0 0
 	HALT
 }

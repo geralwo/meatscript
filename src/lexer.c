@@ -80,7 +80,7 @@ void lexer_tokenize(Lexer *lexer)
 			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 			// printf("lexed identifier '%s' at index: %d\n",token.Value,start);
-			lexer_advance(lexer);
+			// lexer_advance(lexer);
 		}
 		else if (c == '\n')
 		{
@@ -158,6 +158,15 @@ void lexer_tokenize(Lexer *lexer)
 		{
 			token = new_token(TOKEN_HASH);
 			token.Value = "#";
+			token.line = lexer->line;
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
+		else if (c == ';')
+		{
+			token = new_token(TOKEN_SEMICOLON);
+			token.Value = ";";
 			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);

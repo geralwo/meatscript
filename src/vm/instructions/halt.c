@@ -6,34 +6,17 @@
 void execute_HALT(MeatsVM *vm)
 {
 	uint64_t ret = vm_get_register(vm, 31);
-	switch (ret)
-	{
-	case 0:
-	{
-		exit(ret);
-		break;
-	}
-	case 250:
-	{
-		meats_vm_print_asm(vm);
-		exit(ret);
-		break;
-	}
-	case 251:
+	vm_set_flag(vm, VM_FLAG_HALT);
+	//  vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
+	if (vm_flag_is_set(vm, VM_FLAG_PRINT_DEBUG))
 	{
 		meats_vm_print_asm(vm);
 		meats_vm_dump_bytecode(vm);
 		meats_vm_dump_registers(vm);
-		exit(ret);
-		break;
 	}
-	default:
+	else if (vm_flag_is_set(vm, VM_FLAG_HALT))
 	{
-		meats_vm_dump_registers(vm);
-		// meats_vm_dump_bytecode(vm);
-		// meats_vm_print_asm(vm);
 		exit(ret);
-	}
 	}
 }
 

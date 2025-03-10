@@ -1,6 +1,6 @@
 asm
 {
-	MOV r31 2
+	MOV r31 0
 	PUSH 1337
 	POP r1
 	HALT
