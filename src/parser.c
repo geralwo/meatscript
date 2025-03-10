@@ -67,7 +67,7 @@ Token *current_token(Parser *parser)
 // Parser Utility Functions End
 AST_Node *parse_asm(Parser *parser)
 {
-	printf("parsing assembly...\n");
+	// printf("parsing assembly...\n");
 	AST_Node *node = new_ast_node(AST_INLINE_ASM);
 	MeatsArray *asm_tokens = meats_array_new(sizeof(Token));
 	while (current_token(parser)->Type != TOKEN_LBRACE)
@@ -99,7 +99,7 @@ AST_Node *parse_asm(Parser *parser)
 
 AST_Node *parse_keyword(Parser *parser)
 {
-	printf("parsing keyword\n");
+	// printf("parsing keyword\n");
 	Token *token = current_token(parser);
 	if (strcmp("asm", token->Value) == 0)
 	{
@@ -126,7 +126,7 @@ AST_Node *parse_identifier(Parser *parser)
 
 AST_Node *parse_statement(Parser *parser)
 {
-	printf("parsing statement: '%s'...\n", current_token(parser)->Value);
+	// printf("parsing statement: '%s'...\n", current_token(parser)->Value);
 	AST_Node *left = NULL;
 	switch (current_token(parser)->Type)
 	{

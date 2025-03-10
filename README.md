@@ -4,15 +4,14 @@
 ### Todo:
 
 - Full implementation of instruction set
-	- Arithmetic [*]
+	- Arithmetic [✅]
 		- ADD [✅]
-		- SUB [❌]
-		- MUL [❌]
-		- DIV [❌]
-		- MOD [❌]
-
+		- SUB [✅]
+		- MUL [✅]
+		- DIV [✅]
+		- MOD [✅]
 	- Control Flow [❌]
 		- ASM Labels [❌]
 	- Function Call [❌]
 - ASM Parser
-	- Comment Token ';' [❌]
+	- Comment Token ';' [✅]

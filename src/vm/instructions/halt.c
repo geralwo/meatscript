@@ -5,16 +5,15 @@
 
 void execute_HALT(MeatsVM *vm)
 {
-	uint64_t ret = vm_get_register(vm, 31);
+	uint64_t ret = vm_get_register(vm, 30);
 	vm_set_flag(vm, VM_FLAG_HALT);
-	//  vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
 	if (vm_flag_is_set(vm, VM_FLAG_PRINT_DEBUG))
 	{
 		meats_vm_print_asm(vm);
 		meats_vm_dump_bytecode(vm);
 		meats_vm_dump_registers(vm);
 	}
-	else if (vm_flag_is_set(vm, VM_FLAG_HALT))
+	if (vm_flag_is_set(vm, VM_FLAG_HALT))
 	{
 		exit(ret);
 	}

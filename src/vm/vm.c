@@ -19,7 +19,7 @@ void meats_vm_init(MeatsVM *vm)
 {
 	for (int i = 0; i < VM_REGISTER_COUNT; i++)
 		vm->Registers[i] = 0;
-	vm->Registers[31] = 42;
+	vm->Registers[30] = 1;
 	for (int i = 0; i < VM_STACK_SIZE; i++)
 		vm->Stack[i] = 0;
 	vm->Heap = malloc(VM_HEAP_START_SIZE);
@@ -33,7 +33,7 @@ uint8_t fetch(MeatsVM *vm)
 	{
 		return vm->Program[vm->PC++];
 	}
-	printf("%ld is past Program\n", vm->PC);
+	printf("PC '%ld' is past Program!!!\n", vm->PC);
 	return 0x00;
 }
 
@@ -41,7 +41,10 @@ void fetch_bytes(MeatsVM *vm, uint8_t *dest, size_t size)
 {
 	for (size_t i = 0; i < size; i++)
 	{
-		dest[i] = fetch(vm);
+		if (dest != NULL)
+			dest[i] = fetch(vm);
+		else
+			fetch(vm);
 		// printf(": 0x%.2X :\n",dest[i]);
 	}
 	// printf(":: fetched %ld bytes\n",size);
@@ -52,6 +55,7 @@ void meats_vm_run(MeatsVM *vm)
 	while (vm->PC < vm->ProgramLength)
 	{
 		uint8_t opcode = fetch(vm);
+
 		if (execute_table[opcode])
 		{
 			// printf(" Executing 0x%.2X [%ld]:\n", opcode, vm->PC);
@@ -60,19 +64,25 @@ void meats_vm_run(MeatsVM *vm)
 		else
 		{
 			printf("RUNTIME ERROR: Unknown instruction: 0x%.2X at PC=%ld\n", opcode, vm->PC - 1);
-			meats_vm_print_asm(vm);
-			meats_vm_dump_registers(vm);
-			exit('r' + 't');
+			vm_set_flag(vm, VM_FLAG_HALT);
+			vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
+			execute_table[OP_HALT](vm);
 		}
 	}
-	printf("EXITED WITH NO HALT");
+	printf("!!! EXITED WITH NO HALT !!!\n");
+	printf("!!! EXITED WITH NO HALT !!!\n");
+	printf("!!! EXITED WITH NO HALT !!!\n");
+	printf("!!! EXITED WITH NO HALT !!!\n");
+	printf("!!! EXITED WITH NO HALT !!!\n");
+	vm_set_flag(vm, VM_FLAG_HALT);
+	vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
+	execute_table[OP_HALT](vm);
 }
 
 void meats_vm_dump_registers(MeatsVM *vm)
 {
 	for (int i = 0; i < VM_REGISTER_COUNT; i++)
 	{
-
 		printf("  [  r%.02d: ", i);
 		print_bits(vm->Registers[i]);
 		printf(" = %ld  ", vm->Registers[i]);

@@ -18,10 +18,12 @@ void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_HALT] = execute_HALT,
     [OP_PUSH] = execute_PUSH,
     [OP_POP] = execute_POP,
+    [OP_DEBUG] = execute_DEBUG,
 };
 
 void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_NOP] = disasm_NOP,
+    [OP_DEBUG] = disasm_DEBUG,
     [OP_MOV] = disasm_MOV,
     [OP_MOVI] = disasm_MOVI,
     [OP_MOVE] = disasm_MOVE,
