@@ -21,13 +21,15 @@ int main(int argc, char *argv[])
 	meats_vm_init(&vm);
 	vm.HeapSize = MEAT_MEM_POOL.Size;
 	vm.Heap = MEAT_MEM_POOL.Data;
-	meats_vm_print_stats(&vm);
+	// meats_vm_print_stats(&vm);
 	char *binary_file_name = NULL;
 	if (argc < 2)
 	{
 		printf("mobile, easy and typed script compiler\n");
-		printf("Usage: %s <file>\n", argv[0]);
-		printf("Usage: %s repl_asm\n", argv[0]);
+		printf("Usage: %s [options] <file>\n", argv[0]);
+		printf("Options:\n");
+		printf("-o <file>:\twrites bytecode to file\n");
+		printf("repl_asm\tstart a repl in asm mode (file arg is not needed)\n");
 		return 1;
 	}
 	else if (argc > 2)
@@ -39,6 +41,32 @@ int main(int argc, char *argv[])
 				if ((i + 1) >= argc)
 					return 1;
 				binary_file_name = argv[i + 1];
+			}
+			else if (strcmp("-disasm", argv[i]) == 0)
+			{
+				Bytecode program;
+				bytecode_init(&program);
+
+				SourceFile *source_code = read_file(argv[1]);
+				Lexer lexer;
+				lexer_init(&lexer, source_code->source_code, source_code->file_size);
+				lexer_tokenize(&lexer);
+				Parser parser;
+				parser_init(&parser, &lexer);
+				parser_parse(&parser);
+				for (size_t i = 0; i < parser.AST->Count; i++)
+				{
+					AST_Node *node = meats_array_get(parser.AST, i);
+					if (node->Bytecode)
+						bytecode_append(&program, node->Bytecode->bytes, node->Bytecode->size);
+					else
+						exit(13);
+				}
+				vm.Program = program.bytes;
+				vm.ProgramLength = program.size;
+				print_bytes(vm.Program, vm.ProgramLength);
+				meats_vm_print_asm(&vm);
+				return 0;
 			}
 		}
 	}

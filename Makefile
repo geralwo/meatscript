@@ -4,8 +4,8 @@ CC = gcc
 CFLAGS = -std=c17 -Wall -Wextra -Werror -pedantic -Iinclude -O2
 # -Wstrict-prototypes -Wmissing-prototypes
 # Source and output
-SRC = src/meats.c src/util.c src/parser.c src/asm_parser.c src/lexer.c src/stdlib/*.c src/vm/*.c src/vm/instructions/*.c
-OUTPUT = build/meats
+SRC = src/main.c src/util.c src/parser.c src/asm_parser.c src/lexer.c src/stdlib/*.c src/vm/*.c src/vm/instructions/*.c
+OUTPUT = build/meatsc
 
 # Build target
 all: $(OUTPUT)

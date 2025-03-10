@@ -16,6 +16,11 @@
 		"util.h": "c",
 		"stdlib.h": "c",
 		"stddef.h": "c",
-		"inttypes.h": "c"
+		"inttypes.h": "c",
+		"system_error": "c",
+		"functional": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"utility": "c"
 	}
 }

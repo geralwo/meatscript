@@ -4,6 +4,13 @@
 
 typedef uint8_t OpCode;
 
+// A = Arithmetic
+// B =
+// C =
+// D = Moving Data
+// E = Exiting, starting, running
+// F = Jumping, Functions
+
 #define OP_NOP 0x00
 #define OP_HALT 0xE0
 #define OP_MOV 0xDA
@@ -12,6 +19,8 @@ typedef uint8_t OpCode;
 #define OP_ADD 0xAA
 #define OP_JMP 0xFA
 #define OP_JMPE 0xFF
+#define OP_PUSH 0xC0
+#define OP_POP 0xC1
 
 extern void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm);
 extern void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm);
@@ -55,5 +64,15 @@ uint8_t *bytecode_JMP();
 void execute_JMPE(MeatsVM *vm);
 void disasm_JMPE(MeatsVM *vm);
 uint8_t *bytecode_JMPE(uint8_t reg1, uint8_t reg2);
+
+#define PUSH_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
+void execute_PUSH(MeatsVM *vm);
+void disasm_PUSH(MeatsVM *vm);
+uint8_t *bytecode_PUSH(uint64_t value);
+
+#define POP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint8_t))
+void execute_POP(MeatsVM *vm);
+void disasm_POP(MeatsVM *vm);
+uint8_t *bytecode_POP(uint8_t reg);
 
 #endif // INSTRUCTIONSET_H

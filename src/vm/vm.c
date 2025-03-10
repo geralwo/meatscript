@@ -16,6 +16,8 @@ void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [0xFF] = execute_JMPE,
     [0xFA] = execute_JMP,
     [0xE0] = execute_HALT,
+    [0xC0] = execute_PUSH,
+    [0xC1] = execute_POP,
 };
 
 void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
@@ -27,6 +29,8 @@ void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [0xFF] = disasm_JMPE,
     [0xFA] = disasm_JMP,
     [0xE0] = disasm_HALT,
+    [0xC0] = disasm_PUSH,
+    [0xC1] = disasm_POP,
 };
 
 MeatsVM *meats_vm_new(Bytecode *bc)

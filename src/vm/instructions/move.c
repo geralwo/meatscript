@@ -28,7 +28,7 @@ uint8_t *bytecode_MOVE(uint8_t reg, uint64_t value)
 	uint8_t *bytecode = malloc(MOVE_INSTR_SIZE);
 	if (bytecode == NULL)
 		exit(123);
-	bytecode[0] = 0xDC;
+	bytecode[0] = OP_MOVE;
 	bytecode[1] = reg;
 	// Split the 64-bit value into 8 bytes and store them in the bytecode
 	bytecode[2] = (value >> 56) & 0xFF; // Most significant byte

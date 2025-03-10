@@ -55,86 +55,88 @@ int is_valid_byte(const char *str, uint8_t *out_value)
 	return 0; // Invalid
 }
 #define ASM_LABEL_CAP 1024
-char *asm_labels[ASM_LABEL_CAP];
+ASM_Label asm_labels[ASM_LABEL_CAP];
+size_t asm_label_count = 0; // Track number of labels
 
-void asm_parser_process_labels(ASM_Parser *asm_parser)
+void asm_parser_resolve_label(ASM_Parser *asm_parser)
 {
-	for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
+	Token *label_name = meats_array_get(asm_parser->Tokens, ++asm_parser->Position);
+	int label_defined = -1;
+	for (size_t i = 0; i < ASM_LABEL_CAP; i++)
 	{
-		Token *t = meats_array_get(asm_parser->Tokens, i);
-		if (strcmp(t->Value, ":") == 0)
+		if (strcmp(asm_labels[i].name, label_name->Value) == 0)
 		{
-			Token *label_name = meats_array_get(asm_parser->Tokens, ++i);
-			int label_already_defined = -1;
-			for (size_t j = 0; j < ASM_LABEL_CAP; j++)
-			{
-				if (strcmp(asm_labels[j], label_name->Value) == 0)
-				{
-					label_already_defined = 1;
-					break;
-				}
-			}
-			(void)label_already_defined;
+			TODO("Get the label position of %s", asm_labels[i].name);
+			label_defined = 1;
 		}
+	}
+	if (label_defined == -1)
+	{
+		ASM_Label label;
+		label.position = asm_parser->Bytecode->size;
+		label.name = label_name->Value;
+		asm_labels[asm_label_count++] = label;
+	}
+	else if (label_defined == 1)
+	{
+		return;
 	}
 }
 
 void asm_parser_parse(ASM_Parser *asm_parser)
 {
 	uint8_t raw_byte;
-	asm_parser_process_labels(asm_parser);
-	size_t i = 0;
 
-	while (i < asm_parser->Tokens->Count)
+	while (asm_parser->Position < asm_parser->Tokens->Count)
 	{
-		Token *t = meats_array_get(asm_parser->Tokens, i++);
+		Token *t = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 		// printf("current ASM token: '%s' idx: %ld\n", t->Value, i);
 		if (strcmp("MOV", t->Value) == 0)
 		{
-			if (i + 1 >= asm_parser->Tokens->Count)
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
-			Token *regt = meats_array_get(asm_parser->Tokens, i++);
-			Token *valt = meats_array_get(asm_parser->Tokens, i++);
+			Token *regt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			Token *valt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 			uint8_t reg = parse_register(regt->Value);
 			uint8_t val = str_to_uint8(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOV(reg, val), MOV_INSTR_SIZE);
 		}
 		else if (strcmp("MOVI", t->Value) == 0)
 		{
-			if (i + 1 >= asm_parser->Tokens->Count)
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
-			Token *regt = meats_array_get(asm_parser->Tokens, i++);
-			Token *valt = meats_array_get(asm_parser->Tokens, i++);
+			Token *regt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			Token *valt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 			uint8_t reg = parse_register(regt->Value);
 			uint32_t val = str_to_uint32(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOVI(reg, val), MOVI_INSTR_SIZE);
 		}
 		else if (strcmp("MOVE", t->Value) == 0)
 		{
-			if (i + 1 >= asm_parser->Tokens->Count)
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
-			Token *regt = meats_array_get(asm_parser->Tokens, i++);
-			Token *valt = meats_array_get(asm_parser->Tokens, i++);
+			Token *regt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			Token *valt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 			uint8_t reg = parse_register(regt->Value);
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOVE(reg, val), MOVE_INSTR_SIZE);
 		}
 		else if (strcmp("ADD", t->Value) == 0)
 		{
-			if (i + 1 >= asm_parser->Tokens->Count)
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
-			Token *regt = meats_array_get(asm_parser->Tokens, i++);
-			Token *valt = meats_array_get(asm_parser->Tokens, i++);
+			Token *regt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			Token *valt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 			uint8_t reg = parse_register(regt->Value);
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_ADD(reg, val), ADD_INSTR_SIZE);
 		}
 		else if (strcmp("JMPE", t->Value) == 0)
 		{
-			if (i + 1 >= asm_parser->Tokens->Count)
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
-			Token *reg1t = meats_array_get(asm_parser->Tokens, i++);
-			Token *reg2t = meats_array_get(asm_parser->Tokens, i++);
+			Token *reg1t = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			Token *reg2t = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 			uint8_t reg1 = parse_register(reg1t->Value);
 			uint8_t reg2 = parse_register(reg2t->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_JMPE(reg1, reg2), JMPE_INSTR_SIZE);
@@ -153,6 +155,18 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		{
 			bytecode_append(asm_parser->Bytecode, bytecode_NOP(), NOP_INSTR_SIZE);
 		}
+		else if (strcmp("PUSH", t->Value) == 0)
+		{
+			Token *valt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			uint64_t val = str_to_uint64(valt->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_PUSH(val), PUSH_INSTR_SIZE);
+		}
+		else if (strcmp("POP", t->Value) == 0)
+		{
+			Token *regt = meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+			uint8_t reg = parse_register(regt->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_POP(reg), POP_INSTR_SIZE);
+		}
 		else if (strcmp("EOL", t->Value) == 0)
 		{
 			continue;
@@ -163,8 +177,8 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp(":", t->Value) == 0)
 		{
-			i++;
-			continue;
+
+			asm_parser_resolve_label(asm_parser);
 		}
 		else if (is_valid_byte(t->Value, &raw_byte))
 		{
