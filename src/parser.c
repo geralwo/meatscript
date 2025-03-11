@@ -12,6 +12,7 @@
 #include "ast_node.h"
 #include "vm/bytecode.h"
 #include "asm_parser.h"
+#include "stdlib/std_print.h"
 
 Token *current_token(Parser *p);
 void parser_advance(Parser *p);
@@ -156,7 +157,7 @@ void parser_parse(Parser *parser)
 		AST_Node *statement = parse_statement(parser);
 		if (statement == NULL)
 		{
-			printf("Error parsing statement!\n");
+			meats_print("Error parsing Token: '%s' on line '%ld'\n", current_token(parser)->Value, current_token(parser)->line);
 			break;
 		}
 		meats_array_add(parser->AST, statement);

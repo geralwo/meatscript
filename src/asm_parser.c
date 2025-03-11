@@ -9,7 +9,9 @@
 #include "vm/instruction_set.h"
 #include "stdlib/std_print.h"
 
-void asm_parser_process_labels(ASM_Parser *asm_parser);
+#define ASM_LABEL_CAP 1024
+ASM_Label asm_labels[ASM_LABEL_CAP] = {0};
+size_t asm_label_count = 0; // Track number of labels
 
 void asm_parser_init(ASM_Parser *asm_parser, MeatsArray *asm_tokens)
 {
@@ -28,8 +30,6 @@ void asm_parser_free(ASM_Parser *asm_parser)
 
 	meats_array_free(asm_parser->Tokens);
 	asm_parser->Tokens = NULL; // Prevent dangling pointer
-
-	asm_parser = NULL;
 }
 
 uint8_t parse_register(const char *reg)
@@ -55,34 +55,6 @@ int is_valid_byte(const char *str, uint8_t *out_value)
 	}
 	return 0; // Invalid
 }
-#define ASM_LABEL_CAP 1024
-ASM_Label asm_labels[ASM_LABEL_CAP] = {0};
-size_t asm_label_count = 0; // Track number of labels
-
-void asm_parser_resolve_label(ASM_Parser *asm_parser)
-{
-	Token *label_name = meats_array_get(asm_parser->Tokens, asm_parser->Position);
-	int label_defined = -1;
-	for (size_t i = 0; i < ASM_LABEL_CAP; i++)
-	{
-		if (strcmp(asm_labels[i].name, label_name->Value) == 0)
-		{
-			TODO("Get the label position of %s", asm_labels[i].name);
-			label_defined = 1;
-		}
-	}
-	if (label_defined == -1)
-	{
-		ASM_Label label;
-		label.position = asm_parser->Bytecode->size;
-		label.name = label_name->Value;
-		asm_labels[asm_label_count++] = label;
-	}
-	else if (label_defined == 1)
-	{
-		return;
-	}
-}
 
 void asm_parser_advance(ASM_Parser *asm_parser)
 {
@@ -100,6 +72,27 @@ Token *eat_asm_token(ASM_Parser *asm_parser)
 	return meats_array_get(asm_parser->Tokens, asm_parser->Position++);
 }
 
+void asm_parser_preprocessor(ASM_Parser *asm_parser)
+{
+	for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
+	{
+		Token *t = meats_array_get(asm_parser->Tokens, i);
+		if (t->Type == TOKEN_COLON && (i + 1) < asm_parser->Tokens->Count)
+		{
+			ASM_Label label;
+			Token *label_name = meats_array_get(asm_parser->Tokens, i + 1);
+			label.name = copy_string(label_name->Value);
+			asm_labels[asm_label_count++] = label;
+			i++;
+		}
+	}
+}
+
+void asm_parser_finalize(ASM_Parser *asm_parser)
+{
+	(void)asm_parser;
+}
+
 void asm_parser_parse(ASM_Parser *asm_parser)
 {
 	uint8_t raw_byte;
@@ -109,6 +102,9 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 	// 	Token *t = meats_array_get(asm_parser->Tokens, i);
 	// 	meats_print("asm processing :: %s %s\n", t->Value, tokenType_name(t->Type));
 	// }
+
+	asm_parser_preprocessor(asm_parser);
+
 	while (asm_parser->Position < asm_parser->Tokens->Count)
 	{
 		Token *t = eat_asm_token(asm_parser);
@@ -198,8 +194,18 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		else if (strcmp("JMP", t->Value) == 0)
 		{
 			Token *addrt = eat_asm_token(asm_parser);
-			uint64_t addr = str_to_uint64(addrt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
+			uint64_t addr;
+			if (strcmp(addrt->Value, ":") == 0)
+			{
+				eat_asm_token(asm_parser);
+				addr = 0;
+				bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
+			}
+			else
+			{
+				addr = str_to_uint64(addrt->Value);
+				bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
+			}
 		}
 		else if (strcmp("JMPZ", t->Value) == 0)
 		{
@@ -243,8 +249,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp(":", t->Value) == 0)
 		{
-
-			asm_parser_resolve_label(asm_parser);
+			eat_asm_token(asm_parser);
 		}
 		else if (strcmp(";", t->Value) == 0)
 		{
@@ -277,4 +282,5 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			exit(1);
 		}
 	}
+	asm_parser_finalize(asm_parser);
 }

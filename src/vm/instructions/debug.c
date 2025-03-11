@@ -2,11 +2,13 @@
 #include "vm/instruction_set.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "util.h"
 
 void execute_DEBUG(MeatsVM *vm)
 {
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
+	TODO("Implement parsing of flags in asm\n");
 	vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
 }
 

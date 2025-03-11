@@ -18,42 +18,51 @@ build:
 $(OUTPUT): build $(SRC)
 	$(CC) $(CFLAGS) $(SRC) -o $(OUTPUT)
 
-# Run target
-run: $(OUTPUT)
-	./$(OUTPUT) tests/asm_test.meats
-
 # Clean target
 clean:
 	rm build/*
 
-# Directories
-TEST_DIR = tests
-# Test all
+TESTS_BASE_DIR = tests
 test: $(OUTPUT)
-	@echo "Running all tests..."
-	@for dir in $(shell find $(TEST_DIR) -mindepth 1 -type d); do \
-		echo "Running tests in $$dir..."; \
-		for test_file in $$dir/*.meats; do \
-			if [ -f "$$test_file" ]; then \
-				echo "Testing: $$test_file"; \
-				./$(OUTPUT) "$$test_file" || exit 1; \
+	@if [ -z "$(dir)" ]; then \
+		echo "Running all tests in $(TESTS_BASE_DIR)..."; \
+		FAILED=0; \
+		for test_file in $$(find "$(TESTS_BASE_DIR)" -type f -name "*.meats"); do \
+			echo "Testing: $$test_file"; \
+			if ./$(OUTPUT) "$$test_file"; then \
+				echo "\033[32mSUCCESS: $$test_file\033[0m"; \
+			else \
+				echo "\033[31mFAILED: $$test_file\033[0m"; \
+				FAILED=1; \
 			fi; \
 		done; \
-	done
-	@echo "All tests completed."
-
-# Test specific directory
-test-%: $(OUTPUT)
-	@echo "Running tests in $(TEST_DIR)/$*..."
-	@if [ -d "$(TEST_DIR)/$*" ]; then \
-		for test_file in $(TEST_DIR)/$*/*.meats; do \
-			if [ -f "$$test_file" ]; then \
-				echo "Testing: $$test_file"; \
-				./$(OUTPUT) "$$test_file" || exit 1; \
-			fi; \
-		done; \
+		if [ $$FAILED -ne 0 ]; then \
+			echo "Some tests failed!"; \
+			exit 1; \
+		else \
+			echo "All tests completed successfully!"; \
+		fi \
 	else \
-		echo "Error: Test directory '$(TEST_DIR)/$*' does not exist!"; \
-		exit 1; \
+		echo "Running tests in $(TESTS_BASE_DIR)/$(dir)..."; \
+		if [ -d "$(TESTS_BASE_DIR)/$(dir)" ]; then \
+			FAILED=0; \
+			for test_file in $$(find "$(TESTS_BASE_DIR)/$(dir)" -type f -name "*.meats"); do \
+				echo "Testing: $$test_file"; \
+				if ./$(OUTPUT) "$$test_file"; then \
+					echo "\033[32mSUCCESS: $$test_file\033[0m"; \
+				else \
+					echo "\033[31mFAILED: $$test_file\033[0m"; \
+					FAILED=1; \
+				fi; \
+			done; \
+			if [ $$FAILED -ne 0 ]; then \
+				echo "Some tests in $(TESTS_BASE_DIR)/$(dir) failed!"; \
+				exit 1; \
+			else \
+				echo "Tests in $(TESTS_BASE_DIR)/$(dir) completed successfully!"; \
+			fi \
+		else \
+			echo "Error: Test directory '$(TESTS_BASE_DIR)/$(dir)' does not exist!"; \
+			exit 1; \
+		fi \
 	fi
-	@echo "Tests in $(TEST_DIR)/$* completed."
