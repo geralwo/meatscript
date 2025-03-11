@@ -10,7 +10,7 @@
 		- MUL [✅]
 		- DIV [✅]
 		- MOD [✅]
-	- Control Flow [❌]
+	- Jump [✅]
 		- JMP [✅]
 		- JMPZ [✅]
 		- JMPNZ [✅]
@@ -18,7 +18,7 @@
 	- Function Calls [❌]
    	- Stack Manipulation [❌]
 - ASM Parser
-	- ASM Labels [❌]
+	- ASM Labels :LABEL [❌]
 	- Comment Token ';' [✅]
  - Parser
 	- ASM Parser [⭕]
