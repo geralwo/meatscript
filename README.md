@@ -21,6 +21,5 @@
 	- ASM Labels :LABEL [❌]
 	- Comment Token ';' [✅]
  - Parser
-	- ASM Parser [⭕]
    	- Keywords [⭕]
    	  	- asm [✅]
