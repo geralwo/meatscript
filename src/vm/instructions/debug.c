@@ -17,7 +17,11 @@ void disasm_DEBUG(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t flags = vm_bytes_to_uint64(bytes);
+	#ifndef _WIN32
 	printf("DEBUG %ld\n", flags);
+	#else
+	printf("DEBUG %lld\n", flags);
+	#endif
 }
 
 uint8_t *bytecode_DEBUG(uint64_t flags)

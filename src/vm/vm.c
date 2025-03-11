@@ -33,7 +33,11 @@ uint8_t fetch(MeatsVM *vm)
 	{
 		return vm->Program[vm->PC++];
 	}
+	#ifndef _WIN32
 	printf("PC '%ld' is past Program!!!\n", vm->PC);
+	#else
+	printf("PC '%lld' is past Program!!!\n", vm->PC);
+	#endif
 	return 0x00;
 }
 
@@ -63,7 +67,11 @@ void meats_vm_run(MeatsVM *vm)
 		}
 		else
 		{
+			#ifndef _WIN32
 			printf("RUNTIME ERROR: Unknown instruction: 0x%.2X at PC=%ld\n", opcode, vm->PC - 1);
+			#else
+			printf("RUNTIME ERROR: Unknown instruction: 0x%.2X at PC=%lld\n", opcode, vm->PC - 1);
+			#endif
 			vm_set_flag(vm, VM_FLAG_HALT);
 			vm_set_flag(vm, VM_FLAG_PRINT_DEBUG);
 			execute_table[OP_HALT](vm);
@@ -85,7 +93,12 @@ void meats_vm_dump_registers(MeatsVM *vm)
 	{
 		printf("  [  r%.02d: ", i);
 		print_bits(vm->Registers[i]);
+
+		#ifndef _WIN32
 		printf(" = %ld  ", vm->Registers[i]);
+		#else
+		printf(" = %lld  ", vm->Registers[i]);
+		#endif
 		printf("] \n");
 		if ((i + 1) % 4 == 0)
 			printf("\n");
@@ -122,7 +135,12 @@ void meats_vm_print_asm(MeatsVM *vm)
 			disasm_table[opcode](vm);
 		else
 		{
+
+			#ifndef _WIN32
 			printf("DISASM: Unknown instruction: 0x%.2X at PC=%ld\n", opcode, vm->PC - 1);
+			#else
+			printf("DISASM: Unknown instruction: 0x%.2X at PC=%lld\n", opcode, vm->PC - 1);
+			#endif
 			break;
 		}
 	}
@@ -138,7 +156,12 @@ void meats_vm_dump_bytecode(MeatsVM *vm)
 	}
 	else
 	{
+
+		#ifndef _WIN32
 		printf("VM Program Size: %ld\n", vm->ProgramLength);
+		#else
+		printf("VM Program Size: %lld\n", vm->ProgramLength);
+		#endif
 		for (size_t i = 0; i < vm->ProgramLength; i++)
 		{
 			printf("  %02x ", vm->Program[i]);
@@ -151,6 +174,11 @@ void meats_vm_dump_bytecode(MeatsVM *vm)
 
 void meats_vm_print_stats(MeatsVM *vm)
 {
+	#ifndef _WIN32
 	printf("Bytecode Size: %ld\tR31: %ld\nHeapPtr: %p\tHeapSize: %ld\n", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
+	#else
+	printf("Bytecode Size: %lld\tR31: %lld\nHeapPtr: %p\tHeapSize: %lld\n", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
+	#endif
+
 	meats_vm_print_asm(vm);
 }

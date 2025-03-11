@@ -21,7 +21,11 @@ void disasm_MOVI(MeatsVM *vm)
 	uint32_t value;
 	fetch_bytes(vm, bytes, sizeof(uint32_t));
 	value = vm_bytes_to_uint32(bytes);
+	#ifndef _WIN32
 	printf("MOVI r%d %ld\n", reg, (uint64_t)value);
+	#else
+	printf("MOVI r%d %lld\n", reg, (uint64_t)value);
+	#endif
 }
 
 uint8_t *bytecode_MOVI(uint8_t reg, uint32_t value)

@@ -74,7 +74,7 @@ uint64_t str_to_uint64(const char *str)
 	errno = 0;
 	unsigned long value = strtoul(str, &endptr, 10);
 
-	if (errno == ERANGE || value > UINT64_MAX)
+	if (errno == ERANGE)
 	{
 		fprintf(stderr, "Error: Value '%s' out of range for uint64_t\n", str);
 		exit(1);
@@ -93,7 +93,7 @@ size_t str_to_size_t(const char *str)
 	errno = 0;
 	unsigned long value = strtoul(str, &endptr, 10);
 
-	if (errno == ERANGE || value > SIZE_MAX)
+	if (errno == ERANGE)
 	{
 		fprintf(stderr, "Error: Value '%s' out of range for uint64_t\n", str);
 		exit(1);
@@ -110,7 +110,11 @@ void print_bits(uint64_t num)
 {
 	for (uint64_t bit = 0; bit < (sizeof(uint64_t) * 8); bit++)
 	{
+		#ifndef _WIN32
 		printf("%ld", num & 0x01);
+		#else
+		printf("%lld", num & 0x01);
+		#endif
 		if ((bit + 1) % 8 == 0)
 			printf(" ");
 		if ((bit + 1) % 16 == 0)
