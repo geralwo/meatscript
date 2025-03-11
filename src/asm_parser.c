@@ -69,23 +69,78 @@ Token *current_asm_token(ASM_Parser *asm_parser)
 
 Token *eat_asm_token(ASM_Parser *asm_parser)
 {
-	return meats_array_get(asm_parser->Tokens, asm_parser->Position++);
+	if (asm_parser->Position < asm_parser->Tokens->Count)
+		asm_parser->Position++;
+	return meats_array_get(asm_parser->Tokens, asm_parser->Position);
 }
 
 void asm_parser_preprocessor(ASM_Parser *asm_parser)
 {
+	// printf(":: starting asm preproccessor\n");
+	size_t bytecode_position = 0;
 	for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
 	{
 		Token *t = meats_array_get(asm_parser->Tokens, i);
-		if (t->Type == TOKEN_COLON && (i + 1) < asm_parser->Tokens->Count)
+		// printf("%s\n", t->Value);
+		if (strcmp(":", t->Value) == 0)
 		{
+			// printf("LABEL::::::\n");
 			ASM_Label label;
 			Token *label_name = meats_array_get(asm_parser->Tokens, i + 1);
 			label.name = copy_string(label_name->Value);
+			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
+			// printf("Found Label at %ld: '%s' -> %ld\n", label_name->line, label.name, label.position);
 			i++;
 		}
+		else if (strcmp("JMP", t->Value) == 0)
+		{
+			size_t word_size;
+			Token *label_name = meats_array_get(asm_parser->Tokens, i + 1);
+			if (strcmp(":", label_name->Value))
+			{
+				word_size = 2;
+			}
+			else
+			{
+				word_size = get_instr_word_size("JMP");
+			}
+			i += word_size;
+			bytecode_position += get_instr_size(t->Value);
+			// printf("Skipping %ld word(s) for '%s'\n", word_size, t->Value);
+		}
+		else if (t->Type == TOKEN_SEMICOLON)
+		{
+			Token *eol = meats_array_get(asm_parser->Tokens, i++);
+			while (eol->Type != TOKEN_EOL)
+			{
+				eol = meats_array_get(asm_parser->Tokens, i++);
+			}
+		}
+		else
+		{
+			size_t word_size = (get_instr_word_size(t->Value) > 0) ? (get_instr_word_size(t->Value) - 1) : 0;
+			i += word_size;
+			bytecode_position += get_instr_size(t->Value);
+			// printf("Skipping %ld word(s) for '%s'\n", word_size, t->Value);
+		}
 	}
+	// printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
+	//  for (size_t i = 0; i < asm_label_count; i++)
+	//  {
+	//  	printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
+	//  }
+	//  printf(":::::::\n");
+}
+
+size_t get_addr_from_label(const char *name)
+{
+	for (size_t i = 0; i < asm_label_count; i++)
+	{
+		if (strcmp(name, asm_labels[i].name) == 0)
+			return asm_labels[i].position;
+	}
+	return 0;
 }
 
 void asm_parser_finalize(ASM_Parser *asm_parser)
@@ -105,10 +160,10 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 
 	asm_parser_preprocessor(asm_parser);
 
-	while (asm_parser->Position < asm_parser->Tokens->Count)
+	while (current_asm_token(asm_parser)->Type != TOKEN_EOF)
 	{
 		Token *t = eat_asm_token(asm_parser);
-		// printf("current ASM token: '%s' idx: %ld\n", t->Value, i);
+		// printf("current ASM token: '%s' idx: %ld\n", t->Value, asm_parser->Position);
 		if (strcmp("MOV", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -151,8 +206,6 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("MUL", t->Value) == 0)
 		{
-			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
-				break;
 			Token *regt = eat_asm_token(asm_parser);
 			Token *valt = eat_asm_token(asm_parser);
 			uint8_t reg = parse_register(regt->Value);
@@ -161,8 +214,6 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("DIV", t->Value) == 0)
 		{
-			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
-				break;
 			Token *regt = eat_asm_token(asm_parser);
 			Token *valt = eat_asm_token(asm_parser);
 			uint8_t reg = parse_register(regt->Value);
@@ -171,8 +222,6 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("MOD", t->Value) == 0)
 		{
-			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
-				break;
 			Token *regt = eat_asm_token(asm_parser);
 			Token *valt = eat_asm_token(asm_parser);
 			uint8_t reg = parse_register(regt->Value);
@@ -181,8 +230,6 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("JMPE", t->Value) == 0)
 		{
-			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
-				break;
 			Token *reg1t = eat_asm_token(asm_parser);
 			Token *reg2t = eat_asm_token(asm_parser);
 			Token *addrt = eat_asm_token(asm_parser);
@@ -193,12 +240,16 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("JMP", t->Value) == 0)
 		{
+			// printf("JMP PARSE\n");
+			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
+				break;
 			Token *addrt = eat_asm_token(asm_parser);
 			uint64_t addr;
 			if (strcmp(addrt->Value, ":") == 0)
 			{
-				eat_asm_token(asm_parser);
-				addr = 0;
+				Token *label_name = eat_asm_token(asm_parser);
+				addr = get_addr_from_label(label_name->Value);
+				// printf("JMP PARSE LABEL FOUND '%s' TO %ld\n", label_name->Value, addr);
 				bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
 			}
 			else
@@ -209,10 +260,22 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("JMPZ", t->Value) == 0)
 		{
+			// printf("JMPZ PARSE\n");
 			Token *regt = eat_asm_token(asm_parser);
 			Token *addrt = eat_asm_token(asm_parser);
-			uint64_t addr = str_to_uint64(addrt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
+			uint64_t addr;
+			if (strcmp(addrt->Value, ":") == 0)
+			{
+				Token *label_name = eat_asm_token(asm_parser);
+				addr = get_addr_from_label(label_name->Value);
+				// printf("JMPZ PARSE LABEL FOUND '%s' TO %ld\n", label_name->Value, addr);
+				bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
+			}
+			else
+			{
+				addr = str_to_uint64(addrt->Value);
+				bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
+			}
 		}
 		else if (strcmp("JMPNZ", t->Value) == 0)
 		{
@@ -249,6 +312,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp(":", t->Value) == 0)
 		{
+			// printf("ignoring label\n");
 			eat_asm_token(asm_parser);
 		}
 		else if (strcmp(";", t->Value) == 0)
@@ -278,7 +342,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else
 		{
-			printf("ERROR ASM: Unhandled Token '%s'!\n", t->Value);
+			printf("ERROR ASM: Unhandled Token '%s' on line %ld!\n", t->Value, t->line);
 			exit(1);
 		}
 	}

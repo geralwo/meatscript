@@ -171,9 +171,10 @@ char *copy_string(const char *str)
 	char *copy = malloc(len);
 	if (copy)
 	{
+		memset(copy, 0, len);
 		memcpy(copy, str, len);
 	}
-	printf("copied string %p to %p\n", (void *)str, (void *)copy);
+	// printf("copied string %p to %p\n", (void *)str, (void *)copy);
 	return copy;
 }
 

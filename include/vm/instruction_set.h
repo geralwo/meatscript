@@ -36,17 +36,23 @@ typedef uint8_t OpCode;
 extern void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm);
 extern void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm);
 
+size_t get_instr_size(const char *instr);
+size_t get_instr_word_size(const char *instr);
+
 #define NOP_INSTR_SIZE 1
+#define NOP_INSTR_WORD_SIZE 1
 void execute_NOP(MeatsVM *vm);
 void disasm_NOP();
 uint8_t *bytecode_NOP();
 
 #define DEBUG_INSTR_SIZE (1 + sizeof(uint64_t))
+#define DEBUG_INSTR_WORD_SIZE 2
 void execute_DEBUG(MeatsVM *vm);
 void disasm_DEBUG(MeatsVM *vm);
 uint8_t *bytecode_DEBUG(uint64_t debug_flags);
 
 #define HALT_INSTR_SIZE 1
+#define HALT_INSTR_WORD_SIZE 1
 void execute_HALT(MeatsVM *vm);
 void disasm_HALT();
 uint8_t *bytecode_HALT();
@@ -55,68 +61,82 @@ uint8_t *bytecode_HALT();
 void execute_MOV(MeatsVM *vm);
 void disasm_MOV(MeatsVM *vm);
 uint8_t *bytecode_MOV(uint8_t reg, uint8_t value);
+#define MOV_INSTR_WORD_SIZE 3
 
 #define MOVI_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint32_t))
+#define MOVI_INSTR_WORD_SIZE 3
 void execute_MOVI(MeatsVM *vm);
 void disasm_MOVI(MeatsVM *vm);
 uint8_t *bytecode_MOVI(uint8_t reg, uint32_t value);
 
 #define MOVE_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define MOVE_INSTR_WORD_SIZE 3
 void execute_MOVE(MeatsVM *vm);
 void disasm_MOVE(MeatsVM *vm);
 uint8_t *bytecode_MOVE(uint8_t reg, uint64_t value);
 
 #define ADD_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define ADD_INSTR_WORD_SIZE 3
 void execute_ADD(MeatsVM *vm);
 void disasm_ADD(MeatsVM *vm);
 uint8_t *bytecode_ADD(uint8_t reg, uint64_t value);
 
 #define SUB_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define SUB_INSTR_WORD_SIZE 3
 void execute_SUB(MeatsVM *vm);
 void disasm_SUB(MeatsVM *vm);
 uint8_t *bytecode_SUB(uint8_t reg, uint64_t value);
 
 #define MUL_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define MUL_INSTR_WORD_SIZE 3
 void execute_MUL(MeatsVM *vm);
 void disasm_MUL(MeatsVM *vm);
 uint8_t *bytecode_MUL(uint8_t reg, uint64_t value);
 
 #define DIV_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define DIV_INSTR_WORD_SIZE 3
 void execute_DIV(MeatsVM *vm);
 void disasm_DIV(MeatsVM *vm);
 uint8_t *bytecode_DIV(uint8_t reg, uint64_t value);
 
 #define MOD_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define MOD_INSTR_WORD_SIZE 3
 void execute_MOD(MeatsVM *vm);
 void disasm_MOD(MeatsVM *vm);
 uint8_t *bytecode_MOD(uint8_t reg, uint64_t value);
 
 #define JMP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
+#define JMP_INSTR_WORD_SIZE 2
 void execute_JMP(MeatsVM *vm);
 void disasm_JMP(MeatsVM *vm);
 uint8_t *bytecode_JMP(uint64_t address);
 
 #define JMPZ_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define JMPZ_INSTR_WORD_SIZE 3
 void execute_JMPZ(MeatsVM *vm);
 void disasm_JMPZ(MeatsVM *vm);
 uint8_t *bytecode_JMPZ(uint8_t reg, uint64_t address);
 
 #define JMPNZ_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
+#define JMPNZ_INSTR_WORD_SIZE 3
 void execute_JMPNZ(MeatsVM *vm);
 void disasm_JMPNZ(MeatsVM *vm);
 uint8_t *bytecode_JMPNZ(uint8_t reg, uint64_t address);
 
 #define JMPE_INSTR_SIZE (sizeof(OpCode) + 1 + 1 + +sizeof(uint64_t))
+#define JMPE_INSTR_WORD_SIZE 4
 void execute_JMPE(MeatsVM *vm);
 void disasm_JMPE(MeatsVM *vm);
 uint8_t *bytecode_JMPE(uint8_t reg1, uint8_t reg2, uint64_t address);
 
 #define PUSH_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
+#define PUSH_INSTR_WORD_SIZE 2
 void execute_PUSH(MeatsVM *vm);
 void disasm_PUSH(MeatsVM *vm);
 uint8_t *bytecode_PUSH(uint64_t value);
 
 #define POP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint8_t))
+#define POP_INSTR_WORD_SIZE 2
 void execute_POP(MeatsVM *vm);
 void disasm_POP(MeatsVM *vm);
 uint8_t *bytecode_POP(uint8_t reg);

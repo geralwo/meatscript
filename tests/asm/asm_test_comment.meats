@@ -1,5 +1,6 @@
 asm
 {
+	; DEBUG 1 ; DEBUG num/flag (parsing of flags not implemented but 64 bit number expected) 
 	MOV r30 0 ; no debug output / normal exit
 	HALT	
 }

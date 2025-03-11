@@ -3,13 +3,19 @@
 
 ### Todo:
 
-- Full implementation of instruction set
+
+- Full implementation of instruction set [⭕]
 	- Arithmetic [✅]
 		- ADD [✅]
 		- SUB [✅]
 		- MUL [✅]
 		- DIV [✅]
 		- MOD [✅]
+		- ADDF [❌]
+		- SUBF [❌]
+		- MULF [❌]
+		- DIVF [❌]
+		- MODF [❌]
 	- Jump [✅]
 		- JMP [✅]
 		- JMPZ [✅]
@@ -17,9 +23,11 @@
 		- JMPE [✅]
 	- Function Calls [❌]
    	- Stack Manipulation [❌]
-- ASM Parser
+- ASM Parser [⭕]
 	- ASM Labels :LABEL [❌]
 	- Comment Token ';' [✅]
- - Parser
+- Parser [⭕]
    	- Keywords [⭕]
    	  	- asm [✅]
+- Floating Point Numbers [❌]
+- Error Reporting [🤷]

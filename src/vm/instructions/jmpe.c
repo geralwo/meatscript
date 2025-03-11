@@ -11,6 +11,12 @@ void execute_JMPE(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t address = vm_bytes_to_uint64(bytes);
+	if (address >= vm->ProgramLength)
+	{
+		printf("Invalid jump address '%zu'\n", address);
+		exit(1);
+		return;
+	}
 	if (vm_get_register(vm, reg1) == vm_get_register(vm, reg2))
 	{
 		vm->PC = address;

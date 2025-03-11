@@ -86,6 +86,11 @@ AST_Node *parse_asm(Parser *parser)
 		meats_array_add(asm_tokens, current_token(parser));
 		parser_advance(parser);
 	}
+	Token *eoft = malloc(sizeof(Token));
+	eoft->line = 1337;
+	eoft->Type = TOKEN_EOF;
+	eoft->Value = "EOF";
+	meats_array_add(asm_tokens, eoft);
 	parser_advance(parser);
 	// printf("parsed asm block with %ld tokens... ", asm_tokens->Count);
 	ASM_Parser asm_parser;

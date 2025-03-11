@@ -1,0 +1,15 @@
+asm
+{
+	JMP :MAIN
+	MOV r30 1
+	HALT
+	:MAIN
+	MOVE r1 8192
+	:SUB
+	SUB r1 1
+	JMPZ r1 :EXIT
+	JMP :SUB
+	:EXIT
+	MOV r30 0
+	HALT
+}

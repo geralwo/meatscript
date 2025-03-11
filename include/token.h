@@ -25,18 +25,20 @@ typedef struct
 {
     TokenType Type;
     char *Value;
-    int line;
-    int column;
+    size_t line;
+    size_t column;
     int Precedence;
+    size_t ArrayIndex;
 } Token;
 
-static inline Token new_token(TokenType type)
+static inline Token new_token(TokenType type, size_t line_number)
 {
     Token token;
     token.Type = type;
     token.Value = NULL;
-    token.line = -1;
+    token.line = line_number;
     token.column = -1;
+    token.ArrayIndex = 0;
     token.Precedence = 0;
     return token;
 }

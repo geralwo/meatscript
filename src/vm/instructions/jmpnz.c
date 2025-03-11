@@ -22,6 +22,12 @@ void disasm_JMPNZ(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t address = vm_bytes_to_uint64(bytes);
+	if (address >= vm->ProgramLength)
+	{
+		printf("Invalid jump address '%zu'\n", address);
+		exit(1);
+		return;
+	}
 	printf("JMPNZ r%u == 0 -> %zu\n", reg1, address);
 }
 

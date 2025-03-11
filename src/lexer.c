@@ -11,8 +11,8 @@ void lexer_init(Lexer *lexer, char *source_code, size_t length)
 	lexer->source = source_code;
 	lexer->length = length;
 	lexer->position = 0;
-	lexer->line = 0;
-	lexer->column = 0;
+	lexer->line = 1;
+	lexer->column = 1;
 	lexer->Tokens = meats_array_new(sizeof(Token));
 	// printf("Lexer initialized\n");
 }
@@ -53,7 +53,7 @@ void lexer_tokenize(Lexer *lexer)
 		// printf(":: lexing character '%u'\n",c);
 		if (isdigit(c))
 		{
-			token = new_token(TOKEN_NUMBER);
+			token = new_token(TOKEN_NUMBER, lexer->line);
 			int start = lexer->position;
 			while (isdigit(c) || c == '.' || c == '_' || c == 'x')
 			{
@@ -61,34 +61,30 @@ void lexer_tokenize(Lexer *lexer)
 				c = lexer->source[lexer->position];
 			}
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
-			token.line = lexer->line;
 			token.column = lexer->column;
 			// printf("lexed digit '%s' at index: %d\n",token.Value,start);
 			meats_array_add(lexer->Tokens, &token);
 		}
 		else if (isalpha(c))
 		{
+			token = new_token(TOKEN_IDENTIFIER, lexer->line);
 			int start = lexer->position;
+			token.column = lexer->column;
 			while (isalnum(c) || c == '_')
 			{
 				lexer_advance(lexer);
 				c = lexer->source[lexer->position];
 			}
-			token = new_token(TOKEN_IDENTIFIER);
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
-			token.line = lexer->line;
-			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 			// printf("lexed identifier '%s' at index: %d\n",token.Value,start);
 			// lexer_advance(lexer);
 		}
 		else if (c == '\n')
 		{
-			lexer->line++;
 			lexer->column = 0;
-			token = new_token(TOKEN_EOL);
+			token = new_token(TOKEN_EOL, lexer->line);
 			token.Value = "EOL";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 			lexer_advance(lexer);
@@ -99,7 +95,7 @@ void lexer_tokenize(Lexer *lexer)
 		}
 		else if (c == '\'' || c == '"')
 		{
-			token = new_token(TOKEN_STRING);
+			token = new_token(TOKEN_STRING, lexer->line);
 			char quote = c;
 			int start = lexer->position;
 			lexer_advance(lexer); // eat starting quote
@@ -109,15 +105,13 @@ void lexer_tokenize(Lexer *lexer)
 			}
 			lexer_advance(lexer); // eat closing quote
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
-			token.line = lexer->line;
 			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 		}
 		else if (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == ':')
 		{
-			token = new_token(TOKEN_OPERATOR);
+			token = new_token(TOKEN_OPERATOR, lexer->line);
 			token.Value = cut_string(lexer->source, lexer->position, 1);
-			token.line = lexer->line;
 			token.column = lexer->column;
 			if (c == '*' || c == '/')
 			{
@@ -128,18 +122,16 @@ void lexer_tokenize(Lexer *lexer)
 		}
 		else if (c == '{')
 		{
-			token = new_token(TOKEN_LBRACE);
+			token = new_token(TOKEN_LBRACE, lexer->line);
 			token.Value = "{";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
 		else if (c == '}')
 		{
-			token = new_token(TOKEN_RBRACE);
+			token = new_token(TOKEN_RBRACE, lexer->line);
 			token.Value = "}";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
@@ -156,27 +148,24 @@ void lexer_tokenize(Lexer *lexer)
 		}
 		else if (c == '#')
 		{
-			token = new_token(TOKEN_HASH);
+			token = new_token(TOKEN_HASH, lexer->line);
 			token.Value = "#";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
 		else if (c == ';')
 		{
-			token = new_token(TOKEN_SEMICOLON);
+			token = new_token(TOKEN_SEMICOLON, lexer->line);
 			token.Value = ";";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
 		else if (c == ':')
 		{
-			token = new_token(TOKEN_COLON);
+			token = new_token(TOKEN_COLON, lexer->line);
 			token.Value = ":";
-			token.line = lexer->line;
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
@@ -191,9 +180,8 @@ void lexer_tokenize(Lexer *lexer)
 			exit(2);
 		}
 	}
-	Token eof_token = new_token(TOKEN_EOF);
+	Token eof_token = new_token(TOKEN_EOF, lexer->line);
 	eof_token.Value = "EOF";
-	eof_token.line = lexer->line;
 	eof_token.column = lexer->column;
 	meats_array_add(lexer->Tokens, &eof_token);
 }

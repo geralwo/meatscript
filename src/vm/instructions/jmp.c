@@ -8,7 +8,8 @@ void execute_JMP(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t address = vm_bytes_to_uint64(bytes);
-	if (address >= vm->ProgramLength && address == 0)
+	// printf("jmp addr: %ld\n", address);
+	if (address >= vm->ProgramLength)
 	{
 		printf("Invalid jump address '%zu'\n", address);
 		exit(1);

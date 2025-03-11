@@ -1,7 +1,7 @@
 asm 
 {
-	MOVE r1 81920000	; put big value in register 1  10
-	SUB  r1 1		; subtract 1 from register 1 20
+	MOVE r1 81920000	; put big value in register 1
+	SUB  r1 1		; subtract 1 from register 1
 	JMPNZ r1 10		; jump to 10 if register 1 is not equal to 0
 	MOV r30 0		; exit code 0
 	HALT			; end program
