@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 		while (1)
 		{
 			printf(">");
-			char *repl_input = read_line('\n');
+			char *repl_input = read_line(EOF);
 			Lexer repl_lexer;
 			lexer_init(&repl_lexer, repl_input, strlen(repl_input));
 			// printf("%s\n", repl_input);

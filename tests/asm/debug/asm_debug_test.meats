@@ -1,0 +1,6 @@
+asm
+{
+	DEBUG 1
+	MOV r30 0
+	HALT
+}

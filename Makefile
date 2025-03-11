@@ -24,45 +24,23 @@ clean:
 
 TESTS_BASE_DIR = tests
 test: $(OUTPUT)
-	@if [ -z "$(dir)" ]; then \
-		echo "Running all tests in $(TESTS_BASE_DIR)..."; \
-		FAILED=0; \
-		for test_file in $$(find "$(TESTS_BASE_DIR)" -type f -name "*.meats"); do \
-			echo "Testing: $$test_file"; \
-			if ./$(OUTPUT) "$$test_file"; then \
-				echo "\033[32mSUCCESS: $$test_file\033[0m"; \
-			else \
-				echo "\033[31mFAILED: $$test_file\033[0m"; \
-				FAILED=1; \
-			fi; \
-		done; \
-		if [ $$FAILED -ne 0 ]; then \
-			echo "Some tests failed!"; \
-			exit 1; \
+	@echo "Running tests..."
+	@FAILED=0; SUCCESS=0; \
+	for test_file in $$(find "$(TESTS_BASE_DIR)" -type f -name "*.meats"); do \
+		echo "Testing: $$test_file"; \
+		if ./$(OUTPUT) "$$test_file"; then \
+			echo "\033[32mSUCCESS: $$test_file\033[0m"; \
+			SUCCESS=$$((SUCCESS + 1)); \
 		else \
-			echo "All tests completed successfully!"; \
-		fi \
+			echo "\033[31mFAILED: $$test_file\033[0m"; \
+			FAILED=$$((FAILED + 1)); \
+		fi; \
+	done; \
+	echo ""; \
+	echo "\033[32mSuccessful tests: $$SUCCESS\033[0m"; \
+	echo "\033[31mFailed tests: $$FAILED\033[0m"; \
+	if [ $$FAILED -ne 0 ]; then \
+		exit 1; \
 	else \
-		echo "Running tests in $(TESTS_BASE_DIR)/$(dir)..."; \
-		if [ -d "$(TESTS_BASE_DIR)/$(dir)" ]; then \
-			FAILED=0; \
-			for test_file in $$(find "$(TESTS_BASE_DIR)/$(dir)" -type f -name "*.meats"); do \
-				echo "Testing: $$test_file"; \
-				if ./$(OUTPUT) "$$test_file"; then \
-					echo "\033[32mSUCCESS: $$test_file\033[0m"; \
-				else \
-					echo "\033[31mFAILED: $$test_file\033[0m"; \
-					FAILED=1; \
-				fi; \
-			done; \
-			if [ $$FAILED -ne 0 ]; then \
-				echo "Some tests in $(TESTS_BASE_DIR)/$(dir) failed!"; \
-				exit 1; \
-			else \
-				echo "Tests in $(TESTS_BASE_DIR)/$(dir) completed successfully!"; \
-			fi \
-		else \
-			echo "Error: Test directory '$(TESTS_BASE_DIR)/$(dir)' does not exist!"; \
-			exit 1; \
-		fi \
+		echo "\033[32mAll $$SUCCESS tests passed\033[0m"; \
 	fi
