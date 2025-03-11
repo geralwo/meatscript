@@ -11,11 +11,16 @@
 		- DIV [✅]
 		- MOD [✅]
 	- Control Flow [❌]
-		- ASM Labels [❌]
 		- JMP [✅]
 		- JMPZ [✅]
 		- JMPNZ [✅]
 		- JMPE [✅]
-	- Function Call [❌]
+	- Function Calls [❌]
+   	- Stack Manipulation [❌]
 - ASM Parser
+	- ASM Labels [❌]
 	- Comment Token ';' [✅]
+ - Parser
+	- ASM Parser [⭕]
+   	- Keywords [⭕]
+   	  	- asm [✅]
