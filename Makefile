@@ -23,24 +23,56 @@ clean:
 	rm build/*
 
 TESTS_BASE_DIR = tests
+
 test: $(OUTPUT)
-	@echo "Running tests..."
-	@FAILED=0; SUCCESS=0; \
-	for test_file in $$(find "$(TESTS_BASE_DIR)" -type f -name "*.meats"); do \
-		echo "Testing: $$test_file"; \
-		if ./$(OUTPUT) "$$test_file"; then \
-			echo "\033[32mSUCCESS: $$test_file\033[0m"; \
-			SUCCESS=$$((SUCCESS + 1)); \
+	@if [ -z "$(dir)" ]; then \
+		echo "Running all tests in $(TESTS_BASE_DIR)..."; \
+		FAILED=0; SUCCESS=0; \
+		for test_file in $$(find "$(TESTS_BASE_DIR)" -type f -name "*.meats"); do \
+			echo "Testing: $$test_file"; \
+			if ./$(OUTPUT) "$$test_file"; then \
+				echo "\033[32mSUCCESS: $$test_file\033[0m"; \
+				SUCCESS=$$((SUCCESS + 1)); \
+			else \
+				echo "\033[31mFAILED: $$test_file\033[0m"; \
+				FAILED=$$((FAILED + 1)); \
+			fi; \
+		done; \
+		echo ""; \
+		echo "\033[32mSuccessful tests: $$SUCCESS\033[0m"; \
+		echo "\033[31mFailed tests: $$FAILED\033[0m"; \
+		if [ $$FAILED -ne 0 ]; then \
+			echo "\033[31mSome tests failed!\033[0m"; \
+			exit 1; \
 		else \
-			echo "\033[31mFAILED: $$test_file\033[0m"; \
-			FAILED=$$((FAILED + 1)); \
-		fi; \
-	done; \
-	echo ""; \
-	echo "\033[32mSuccessful tests: $$SUCCESS\033[0m"; \
-	echo "\033[31mFailed tests: $$FAILED\033[0m"; \
-	if [ $$FAILED -ne 0 ]; then \
-		exit 1; \
+			echo "\033[32mAll tests completed successfully!\033[0m"; \
+		fi \
 	else \
-		echo "\033[32mAll $$SUCCESS tests passed\033[0m"; \
+		echo "Running tests in $(TESTS_BASE_DIR)/$(dir)..."; \
+		if [ -d "$(TESTS_BASE_DIR)/$(dir)" ]; then \
+			FAILED=0; SUCCESS=0; \
+			for test_file in $$(find "$(TESTS_BASE_DIR)/$(dir)" -type f -name "*.meats"); do \
+				echo "Testing: $$test_file"; \
+				if ./$(OUTPUT) "$$test_file"; then \
+					echo "\033[32mSUCCESS: $$test_file\033[0m"; \
+					SUCCESS=$$((SUCCESS + 1)); \
+				else \
+					echo "\033[31mFAILED: $$test_file\033[0m"; \
+					FAILED=$$((FAILED + 1)); \
+				fi; \
+			done; \
+			echo ""; \
+			echo "\033[32mSuccessful tests: $$SUCCESS\033[0m"; \
+			echo "\033[31mFailed tests: $$FAILED\033[0m"; \
+			if [ $$FAILED -ne 0 ]; then \
+				echo "\033[31mSome tests in $(TESTS_BASE_DIR)/$(dir) failed!\033[0m"; \
+				exit 1; \
+			else \
+				echo "\033[32mTests in $(TESTS_BASE_DIR)/$(dir) completed successfully!\033[0m"; \
+			fi \
+		else \
+			echo "\033[31mError: Test directory '$(TESTS_BASE_DIR)/$(dir)' does not exist!\033[0m"; \
+			exit 1; \
+		fi \
 	fi
+
