@@ -136,9 +136,22 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == '(' || c == ')')
+		else if (c == '(')
 		{
-			TODO("implement parentheses");
+			token = new_token(TOKEN_LPAREN, lexer->line);
+			token.Value = "(";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+			lexer_advance(lexer);
+		}
+		else if (c == ')')
+		{
+			token = new_token(TOKEN_RPAREN, lexer->line);
+			token.Value = ")";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
 			lexer_advance(lexer);
 		}
 		else if (c == '[' || c == ']')

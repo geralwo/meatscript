@@ -1,5 +1,7 @@
 asm
 {
+	; simple asm parsing test
 	MOV r30 0
 	HALT
+	13 37 69 42 0
 }

@@ -1,0 +1,26 @@
+asm
+{
+	
+	MOVE r2 8192
+	JMP :JMPZ
+	13 37 69 42 0
+	:MAIN
+	MOV r30 0
+	HALT
+
+	:JMPZ
+	JMPZ r0 :JMPNZ
+
+	:JMPNZ
+	JMPNZ r30 :ADD_ONE
+
+
+
+	:ADD_ONE
+	ADD r1 1
+	JMPE r1 r2 :MAIN
+	JMP :ADD_ONE
+
+
+
+}

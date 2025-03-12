@@ -78,53 +78,64 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 {
 	// printf(":: starting asm preproccessor\n");
 	size_t bytecode_position = 0;
+
 	for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
 	{
+		size_t word_size = 0;
 		Token *t = meats_array_get(asm_parser->Tokens, i);
-		// printf("%s\n", t->Value);
+
+		// label declarations should only be found directly after new lines
 		if (strcmp(":", t->Value) == 0)
 		{
-			// printf("LABEL::::::\n");
+			Token *label_name = meats_array_get(asm_parser->Tokens, ++i);
 			ASM_Label label;
-			Token *label_name = meats_array_get(asm_parser->Tokens, i + 1);
 			label.name = copy_string(label_name->Value);
 			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
 			// printf("Found Label at %ld: '%s' -> %ld\n", label_name->line, label.name, label.position);
-			i++;
 		}
-		else if (strcmp("JMP", t->Value) == 0)
-		{
-			size_t word_size;
-			Token *label_name = meats_array_get(asm_parser->Tokens, i + 1);
-			if (strcmp(":", label_name->Value))
-			{
-				word_size = 2;
-			}
-			else
-			{
-				word_size = get_instr_word_size("JMP");
-			}
-			i += word_size;
-			bytecode_position += get_instr_size(t->Value);
-			// printf("Skipping %ld word(s) for '%s'\n", word_size, t->Value);
-		}
+		// if current token is ; skip all tokens up to eol
 		else if (t->Type == TOKEN_SEMICOLON)
 		{
-			Token *eol = meats_array_get(asm_parser->Tokens, i++);
-			while (eol->Type != TOKEN_EOL)
+			Token *comment = meats_array_get(asm_parser->Tokens, i);
+			while (comment->Type != TOKEN_EOL)
 			{
-				eol = meats_array_get(asm_parser->Tokens, i++);
+				comment = meats_array_get(asm_parser->Tokens, i++);
 			}
 		}
+		// else we found an assembly keyword and update the bytecode position or index we use to jump around with
+		// this means the current token is for example 'JMPE'
+		// a line could look like this: 'JMPE r0 r1 13'
+		// or                         : 'JMPE r0 r1 :MAIN'
+		// we are here:                  ^
+		// an instruction has a word size which counts the whole instruction. for JMPE its 4
+		// so to increment everything correctly, we need to find out how many words we can skip
+		// to get the next potentially relevant token.
+		// for JMPE:
+		// skip (JMPE_WORD_SIZE - 1) words
+		// increment bytecode position by JMPE_INSTR_SIZE
+		// but not all instruction can work with labels.
 		else
 		{
-			size_t word_size = (get_instr_word_size(t->Value) > 0) ? (get_instr_word_size(t->Value) - 1) : 0;
-			i += word_size;
+			word_size = get_instr_word_size(t->Value);
+
+			// check the last argument for a ':'
+			if (word_size > 0 && i + word_size - 1 < asm_parser->Tokens->Count)
+			{
+				Token *last_arg = meats_array_get(asm_parser->Tokens, i + word_size - 1);
+				if (strcmp(":", last_arg->Value) != 0)
+				{
+					word_size -= 1;
+				}
+			}
+
+			// ppdate Bytecode Position
 			bytecode_position += get_instr_size(t->Value);
-			// printf("Skipping %ld word(s) for '%s'\n", word_size, t->Value);
+			// printf("Skipping %ld words for '%s' | bytecode pos: %ld\n", word_size, t->Value, bytecode_position);
+			i += word_size;
 		}
 	}
+
 	// printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
 	//  for (size_t i = 0; i < asm_label_count; i++)
 	//  {
@@ -143,20 +154,9 @@ size_t get_addr_from_label(const char *name)
 	return 0;
 }
 
-void asm_parser_finalize(ASM_Parser *asm_parser)
-{
-	(void)asm_parser;
-}
-
 void asm_parser_parse(ASM_Parser *asm_parser)
 {
 	uint8_t raw_byte;
-	// meats_print("ASM PARSER:\n");
-	// for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
-	// {
-	// 	Token *t = meats_array_get(asm_parser->Tokens, i);
-	// 	meats_print("asm processing :: %s %s\n", t->Value, tokenType_name(t->Type));
-	// }
 
 	asm_parser_preprocessor(asm_parser);
 
@@ -228,19 +228,8 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOD(reg, val), MUL_INSTR_SIZE);
 		}
-		else if (strcmp("JMPE", t->Value) == 0)
-		{
-			Token *reg1t = eat_asm_token(asm_parser);
-			Token *reg2t = eat_asm_token(asm_parser);
-			Token *addrt = eat_asm_token(asm_parser);
-			uint8_t reg1 = parse_register(reg1t->Value);
-			uint8_t reg2 = parse_register(reg2t->Value);
-			uint64_t addr = str_to_uint64(addrt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_JMPE(reg1, reg2, addr), JMPE_INSTR_SIZE);
-		}
 		else if (strcmp("JMP", t->Value) == 0)
 		{
-			// printf("JMP PARSE\n");
 			if (asm_parser->Position + 1 >= asm_parser->Tokens->Count)
 				break;
 			Token *addrt = eat_asm_token(asm_parser);
@@ -249,14 +238,31 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			{
 				Token *label_name = eat_asm_token(asm_parser);
 				addr = get_addr_from_label(label_name->Value);
-				// printf("JMP PARSE LABEL FOUND '%s' TO %ld\n", label_name->Value, addr);
-				bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
 			}
 			else
 			{
 				addr = str_to_uint64(addrt->Value);
-				bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
 			}
+			bytecode_append(asm_parser->Bytecode, bytecode_JMP(addr), JMP_INSTR_SIZE);
+		}
+		else if (strcmp("JMPE", t->Value) == 0)
+		{
+			Token *reg1t = eat_asm_token(asm_parser);
+			Token *reg2t = eat_asm_token(asm_parser);
+			Token *addrt = eat_asm_token(asm_parser);
+			uint8_t reg1 = parse_register(reg1t->Value);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			uint64_t addr;
+			if (strcmp(addrt->Value, ":") == 0)
+			{
+				Token *label_name = eat_asm_token(asm_parser);
+				addr = get_addr_from_label(label_name->Value);
+			}
+			else
+			{
+				addr = str_to_uint64(addrt->Value);
+			}
+			bytecode_append(asm_parser->Bytecode, bytecode_JMPE(reg1, reg2, addr), JMPE_INSTR_SIZE);
 		}
 		else if (strcmp("JMPZ", t->Value) == 0)
 		{
@@ -268,20 +274,27 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			{
 				Token *label_name = eat_asm_token(asm_parser);
 				addr = get_addr_from_label(label_name->Value);
-				// printf("JMPZ PARSE LABEL FOUND '%s' TO %ld\n", label_name->Value, addr);
-				bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
 			}
 			else
 			{
 				addr = str_to_uint64(addrt->Value);
-				bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
 			}
+			bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
 		}
 		else if (strcmp("JMPNZ", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
 			Token *addrt = eat_asm_token(asm_parser);
-			uint64_t addr = str_to_uint64(addrt->Value);
+			uint64_t addr;
+			if (strcmp(addrt->Value, ":") == 0)
+			{
+				Token *label_name = eat_asm_token(asm_parser);
+				addr = get_addr_from_label(label_name->Value);
+			}
+			else
+			{
+				addr = str_to_uint64(addrt->Value);
+			}
 			bytecode_append(asm_parser->Bytecode, bytecode_JMPNZ(parse_register(regt->Value), addr), JMPNZ_INSTR_SIZE);
 		}
 		else if (strcmp("DEBUG", t->Value) == 0)
@@ -346,5 +359,4 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			exit(1);
 		}
 	}
-	asm_parser_finalize(asm_parser);
 }

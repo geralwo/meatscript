@@ -1,7 +1,7 @@
 asm 
 {
 	
-	MOVE r1 81920000	; put big value in register 1
+	MOVE r1 8192	; put big value in register 1
 	ADD  r2 1		; add 1 to register 2
 	JMPE r1 r2 40		; jump to 32 if register 1 is equal to register 2 
 	JMP 10			; jump to 10

@@ -39,25 +39,25 @@ extern void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm);
 size_t get_instr_size(const char *instr);
 size_t get_instr_word_size(const char *instr);
 
-#define NOP_INSTR_SIZE 1
+#define NOP_INSTR_SIZE sizeof(OpCode)
 #define NOP_INSTR_WORD_SIZE 1
 void execute_NOP(MeatsVM *vm);
 void disasm_NOP();
 uint8_t *bytecode_NOP();
 
-#define DEBUG_INSTR_SIZE (1 + sizeof(uint64_t))
+#define DEBUG_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
 #define DEBUG_INSTR_WORD_SIZE 2
 void execute_DEBUG(MeatsVM *vm);
 void disasm_DEBUG(MeatsVM *vm);
 uint8_t *bytecode_DEBUG(uint64_t debug_flags);
 
-#define HALT_INSTR_SIZE 1
+#define HALT_INSTR_SIZE sizeof(OpCode)
 #define HALT_INSTR_WORD_SIZE 1
 void execute_HALT(MeatsVM *vm);
 void disasm_HALT();
 uint8_t *bytecode_HALT();
 
-#define MOV_INSTR_SIZE (1 + 1 + 1)
+#define MOV_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
 void execute_MOV(MeatsVM *vm);
 void disasm_MOV(MeatsVM *vm);
 uint8_t *bytecode_MOV(uint8_t reg, uint8_t value);

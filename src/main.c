@@ -16,6 +16,7 @@
 int main(int argc, char *argv[])
 {
 
+	int dont_run_vm = 0;
 	MeatsVM vm;
 	_meat_mem_init();
 	meats_vm_init(&vm);
@@ -68,6 +69,10 @@ int main(int argc, char *argv[])
 				meats_vm_print_asm(&vm);
 				return 0;
 			}
+			else if (strcmp("-dont-run-vm", argv[i]) == 0)
+			{
+				dont_run_vm = 1;
+			}
 		}
 	}
 
@@ -94,7 +99,8 @@ int main(int argc, char *argv[])
 			vm.ProgramLength = repl_init.size;
 			vm.Program = repl_init.bytes;
 			// meats_vm_dump_bytecode(&vm);
-			meats_vm_run(&vm);
+			if (dont_run_vm == 0)
+				meats_vm_run(&vm);
 		}
 		// printf("\n>");
 		// char *repl_input = read_line(EOF);
@@ -150,11 +156,19 @@ int main(int argc, char *argv[])
 			write_bytecode_to_file(binary_file_name, vm.Program, vm.ProgramLength);
 		}
 		// meats_vm_dump_bytecode(&vm);
-		meats_vm_run(&vm);
-		// meats_vm_dump_registers(&vm);
-		//  meats_vm_dump_bytecode(&vm);
-		// meats_vm_print_asm(&vm);
-		// meats_vm_print_stats(&vm);
+		if (dont_run_vm == 0)
+		{
+
+			meats_vm_run(&vm);
+		}
+		else
+		{
+			meats_vm_dump_bytecode(&vm);
+			meats_vm_print_asm(&vm);
+			meats_vm_dump_registers(&vm);
+			meats_vm_print_stats(&vm);
+			return 0;
+		}
 		return vm.Registers[31];
 	}
 

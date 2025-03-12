@@ -10,6 +10,7 @@ void execute_JMPNZ(MeatsVM *vm)
 	uint8_t bytes[sizeof(uint64_t)];
 	fetch_bytes(vm, bytes, sizeof(uint64_t));
 	uint64_t address = vm_bytes_to_uint64(bytes);
+	// printf("jmpnz addr: %ld\n", address);
 	if (vm_get_register(vm, reg1) != 0)
 	{
 		vm->PC = address;

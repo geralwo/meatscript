@@ -1,5 +1,6 @@
 asm
 {
+	DEBUG 1
 	JMP :MAIN
 	MOV r30 1
 	HALT

@@ -50,7 +50,7 @@ size_t get_instr_word_size(const char *instr)
 	}
 	else if (strcmp("MOVI", instr) == 0)
 	{
-		return MOVI_INSTR_SIZE;
+		return MOVI_INSTR_WORD_SIZE;
 	}
 	else if (strcmp("MOVE", instr) == 0)
 	{
@@ -70,21 +70,19 @@ size_t get_instr_word_size(const char *instr)
 	}
 	else if (strcmp("DIV", instr) == 0)
 	{
-		return MUL_INSTR_WORD_SIZE;
+		return DIV_INSTR_WORD_SIZE;
 	}
 	else if (strcmp("MOD", instr) == 0)
 	{
-		return MUL_INSTR_WORD_SIZE;
-	}
-	else if (strcmp("JMPE", instr) == 0)
-	{
-
-		return JMPE_INSTR_WORD_SIZE;
+		return MOD_INSTR_WORD_SIZE;
 	}
 	else if (strcmp("JMP", instr) == 0)
 	{
-
 		return JMP_INSTR_WORD_SIZE;
+	}
+	else if (strcmp("JMPE", instr) == 0)
+	{
+		return JMPE_INSTR_WORD_SIZE;
 	}
 	else if (strcmp("JMPZ", instr) == 0)
 	{
@@ -146,21 +144,19 @@ size_t get_instr_size(const char *instr)
 	}
 	else if (strcmp("DIV", instr) == 0)
 	{
-		return MUL_INSTR_SIZE;
+		return DIV_INSTR_SIZE;
 	}
 	else if (strcmp("MOD", instr) == 0)
 	{
-		return MUL_INSTR_SIZE;
-	}
-	else if (strcmp("JMPE", instr) == 0)
-	{
-
-		return JMPE_INSTR_SIZE;
+		return MOD_INSTR_SIZE;
 	}
 	else if (strcmp("JMP", instr) == 0)
 	{
-
 		return JMP_INSTR_SIZE;
+	}
+	else if (strcmp("JMPE", instr) == 0)
+	{
+		return JMPE_INSTR_SIZE;
 	}
 	else if (strcmp("JMPZ", instr) == 0)
 	{
