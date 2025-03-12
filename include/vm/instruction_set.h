@@ -164,16 +164,4 @@ void execute_JMPE(MeatsVM *vm);
 void disasm_JMPE(MeatsVM *vm);
 uint8_t *bytecode_JMPE(uint8_t reg1, uint8_t reg2, uint64_t address);
 
-// #define PUSH_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
-// #define PUSH_INSTR_WORD_SIZE 2
-// void execute_PUSH(MeatsVM *vm);
-// void disasm_PUSH(MeatsVM *vm);
-// uint8_t *bytecode_PUSH(uint64_t value);
-
-// #define POP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint8_t))
-// #define POP_INSTR_WORD_SIZE 2
-// void execute_POP(MeatsVM *vm);
-// void disasm_POP(MeatsVM *vm);
-// uint8_t *bytecode_POP(uint8_t reg);
-
 #endif // INSTRUCTIONSET_H

@@ -16,6 +16,7 @@ typedef enum
     TOKEN_RBRACE,
     TOKEN_HASH,
     TOKEN_COLON,
+    TOKEN_COMMA,
     TOKEN_SEMICOLON,
     TOKEN_SYMBOL,
     TOKEN_EOL,
@@ -78,6 +79,8 @@ static inline const char *tokenType_name(TokenType type)
         return "RPAREN";
     case TOKEN_COLON:
         return "COLON";
+    case TOKEN_COMMA:
+        return "COMMA";
     case TOKEN_SEMICOLON:
         return "SEMICOLON";
     case TOKEN_SYMBOL:

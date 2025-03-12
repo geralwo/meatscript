@@ -1,0 +1,16 @@
+asm
+{
+	MOV r1 5        ; Set r1 = 5 (the number we want the factorial of)
+	MOV r2 1        ; Set r2 = 1 (accumulator for factorial)
+	MOV r3 1        ; Set r3 = 1 (counter)
+
+	:loop
+	MULR r2 r3      ; r2 = r2 * r3
+	ADD r3 1        ; Increment r3
+	JMPE r3 r1 :exit ; If r3 == r1, exit loop
+	JMP :loop       ; Otherwise, repeat loop
+
+	:exit
+	MOV r30 0      ; Indicate completion
+	HALT            ; Stop execution
+}

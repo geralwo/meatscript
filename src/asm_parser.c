@@ -81,8 +81,8 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 
 	for (size_t i = 0; i < asm_parser->Tokens->Count; i++)
 	{
-		size_t word_size = 0;
 		Token *t = meats_array_get(asm_parser->Tokens, i);
+		size_t word_size = get_instr_word_size(t->Value);
 
 		// label declarations should only be found directly after new lines
 		if (t->Type == TOKEN_SYMBOL)
@@ -91,15 +91,17 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 			label.name = copy_string(t->Value);
 			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
-			// printf("Found Label at %ld: '%s' -> %ld\n", label_name->line, label.name, label.position);
+			printf("Found Label at %ld: '%s' -> %ld\n", t->line, label.name, label.position);
 		}
 		// if current token is ; skip all tokens up to eol
 		else if (t->Type == TOKEN_SEMICOLON)
 		{
-			Token *comment = meats_array_get(asm_parser->Tokens, i);
-			while (comment->Type != TOKEN_EOL)
+			while (i < asm_parser->Tokens->Count)
 			{
-				comment = meats_array_get(asm_parser->Tokens, i++);
+				Token *comment = meats_array_get(asm_parser->Tokens, i);
+				if (comment->Type == TOKEN_EOL)
+					break;
+				i++;
 			}
 		}
 		// else we found an assembly keyword and update the bytecode position or index we use to jump around with
@@ -115,21 +117,22 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 		// increment bytecode position by JMPE_INSTR_SIZE
 		// but not all instruction can work with labels.
 		// all labels are always the last argument.
-		else
+		else if (t->Type == TOKEN_IDENTIFIER)
 		{
-			word_size = (get_instr_word_size(t->Value) > 0) ? (get_instr_word_size(t->Value) - 1) : 0;
-			bytecode_position += get_instr_size(t->Value);
-			// printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
-			i += word_size;
+			if (word_size > 0)
+				word_size -= 1;
 		}
+		bytecode_position += get_instr_size(t->Value);
+		printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
+		i += word_size;
 	}
 
-	// printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
-	// for (size_t i = 0; i < asm_label_count; i++)
-	// {
-	// 	printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
-	// }
-	// printf(":::::::\n");
+	printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
+	for (size_t i = 0; i < asm_label_count; i++)
+	{
+		printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
+	}
+	printf(":::::::\n");
 }
 
 size_t get_addr_from_label(const char *name)
@@ -151,7 +154,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 	while (current_asm_token(asm_parser)->Type != TOKEN_EOF)
 	{
 		Token *t = eat_asm_token(asm_parser);
-		// printf("current ASM token: '%s' [%s]idx: %ld\n", t->Value, tokenType_name(t->Type), asm_parser->Position);
+		printf("current ASM token: '%s' [%s]idx: %ld\n", t->Value, tokenType_name(t->Type), asm_parser->Position);
 		if (strcmp("MOV", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);

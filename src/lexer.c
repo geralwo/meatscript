@@ -127,6 +127,22 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
+		else if (current_char(lexer) == '=')
+		{
+			token = new_token(TOKEN_EQUAL, lexer->line);
+			token.Value = "=";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
+		else if (current_char(lexer) == ',')
+		{
+			token = new_token(TOKEN_COMMA, lexer->line);
+			token.Value = ",";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
 		else if (current_char(lexer) == '}')
 		{
 			token = new_token(TOKEN_RBRACE, lexer->line);
@@ -142,7 +158,6 @@ void lexer_tokenize(Lexer *lexer)
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
-			lexer_advance(lexer);
 		}
 		else if (current_char(lexer) == ')')
 		{
@@ -151,7 +166,6 @@ void lexer_tokenize(Lexer *lexer)
 			token.column = lexer->column;
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
-			lexer_advance(lexer);
 		}
 		else if (current_char(lexer) == '[' || current_char(lexer) == ']')
 		{
