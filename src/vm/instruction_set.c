@@ -18,8 +18,6 @@ void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_JMPNZ] = execute_JMPNZ,
     [OP_JMPE] = execute_JMPE,
     [OP_HALT] = execute_HALT,
-    [OP_PUSH] = execute_PUSH,
-    [OP_POP] = execute_POP,
     [OP_DEBUG] = execute_DEBUG,
 };
 
@@ -40,8 +38,6 @@ void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_JMPNZ] = disasm_JMPNZ,
     [OP_JMPE] = disasm_JMPE,
     [OP_HALT] = disasm_HALT,
-    [OP_PUSH] = disasm_PUSH,
-    [OP_POP] = disasm_POP,
 };
 
 size_t get_instr_word_size(const char *instr)
@@ -109,14 +105,6 @@ size_t get_instr_word_size(const char *instr)
 	else if (strcmp("NOP", instr) == 0)
 	{
 		return NOP_INSTR_WORD_SIZE;
-	}
-	else if (strcmp("PUSH", instr) == 0)
-	{
-		return PUSH_INSTR_WORD_SIZE;
-	}
-	else if (strcmp("POP", instr) == 0)
-	{
-		return POP_INSTR_WORD_SIZE;
 	}
 	else
 		return 0;
@@ -187,14 +175,6 @@ size_t get_instr_size(const char *instr)
 	else if (strcmp("NOP", instr) == 0)
 	{
 		return NOP_INSTR_SIZE;
-	}
-	else if (strcmp("PUSH", instr) == 0)
-	{
-		return PUSH_INSTR_SIZE;
-	}
-	else if (strcmp("POP", instr) == 0)
-	{
-		return POP_INSTR_SIZE;
 	}
 	else
 		return 0;

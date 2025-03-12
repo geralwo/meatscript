@@ -307,18 +307,6 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		{
 			bytecode_append(asm_parser->Bytecode, bytecode_NOP(), NOP_INSTR_SIZE);
 		}
-		else if (strcmp("PUSH", t->Value) == 0)
-		{
-			Token *valt = eat_asm_token(asm_parser);
-			uint64_t val = str_to_uint64(valt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_PUSH(val), PUSH_INSTR_SIZE);
-		}
-		else if (strcmp("POP", t->Value) == 0)
-		{
-			Token *regt = eat_asm_token(asm_parser);
-			uint8_t reg = parse_register(regt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_POP(reg), POP_INSTR_SIZE);
-		}
 		else if (strcmp(":", t->Value) == 0)
 		{
 			// printf("ignoring label\n");
