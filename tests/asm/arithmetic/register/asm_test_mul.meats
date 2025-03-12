@@ -1,0 +1,14 @@
+asm
+{
+	MOVE r1 1
+	MOVE r2 2
+	MULR r1 r2
+	JMPE r1 r2 :success
+	
+	:fail
+	HALT
+
+	:success
+	MOV r30 0
+	HALT
+}
