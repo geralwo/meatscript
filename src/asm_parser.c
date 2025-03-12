@@ -342,6 +342,16 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint64_t flags = str_to_uint64(flagt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_DEBUG(flags), DEBUG_INSTR_SIZE);
 		}
+		else if (strcmp("PUSH", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			bytecode_append(asm_parser->Bytecode, bytecode_PUSH(parse_register(regt->Value)), PUSH_INSTR_SIZE);
+		}
+		else if (strcmp("POP", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			bytecode_append(asm_parser->Bytecode, bytecode_POP(parse_register(regt->Value)), POP_INSTR_SIZE);
+		}
 		else if (strcmp("HALT", t->Value) == 0)
 		{
 			bytecode_append(asm_parser->Bytecode, bytecode_HALT(), HALT_INSTR_SIZE);
