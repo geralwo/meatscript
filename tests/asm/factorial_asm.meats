@@ -1,21 +1,17 @@
 asm
 {
-	; Initialize registers
-	MOV r1 5
-	MOV r2 1
-	MOV r3 1
+	MOVE r1 8192
+	MOVE r2 1
+	MOVE r3 1
 
-	
-	JMPE r1 r3 :end_factorial
-
-	:factorial_loop
+	:main
+	JMPE r1 r3 :exit
 	MULR r2 r3       
-	;ADD r3 1      
-	;JMPE r3 r1 :end_factorial 
-	;JMP :factorial_loop
-	JMP :end_factorial
+	ADD r3 1    
+	JMPE r3 r1 :exit 
+	JMP :main
 
-	:end_factorial
-	MOV r30 1
+	:exit
+	MOV r30 0
 	HALT
 }

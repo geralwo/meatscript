@@ -135,6 +135,11 @@ int main(int argc, char *argv[])
 		lexer_tokenize(&lexer);
 		// printf("Lexer finished:\n");
 		// printf("Token count: %ld\n", lexer.Tokens->Count);
+		// for (size_t i = 0; i < lexer.Tokens->Count; i++)
+		// {
+		// 	Token *t = meats_array_get(lexer.Tokens, i);
+		// 	printf("Token: %s %s\n", t->Value, tokenType_name(t->Type));
+		// }
 		Parser parser;
 		parser_init(&parser, &lexer);
 		parser_parse(&parser);
@@ -163,9 +168,14 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
+			for (size_t i = 0; i < lexer.Tokens->Count; i++)
+			{
+				Token *t = meats_array_get(lexer.Tokens, i);
+				printf("Token: %s %s\n", t->Value, tokenType_name(t->Type));
+			}
 			meats_vm_dump_bytecode(&vm);
 			meats_vm_print_asm(&vm);
-			meats_vm_dump_registers(&vm);
+			// meats_vm_dump_registers(&vm);
 			meats_vm_print_stats(&vm);
 			return 0;
 		}

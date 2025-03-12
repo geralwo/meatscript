@@ -22,6 +22,7 @@
 		"tuple": "c",
 		"type_traits": "c",
 		"utility": "c",
-		"vm.h": "c"
+		"vm.h": "c",
+		"random": "c"
 	}
 }

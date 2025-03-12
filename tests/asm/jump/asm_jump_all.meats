@@ -3,7 +3,6 @@ asm
 	
 	MOVE r2 8192
 	JMP :JMPZ
-	13 37 69 42 0
 	:MAIN
 	MOV r30 0
 	HALT

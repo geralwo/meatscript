@@ -16,12 +16,12 @@ uint8_t str_to_uint8(const char *str)
 
 	if (errno == ERANGE || value > UINT8_MAX)
 	{
-		fprintf(stderr, "Error: Value '%s' out of range for uint8_t\n", str);
+		fprintf(stderr, "Error : Value '%s' out of range for uint8_t\n", str);
 		exit(1);
 	}
 	if (*endptr != '\0')
 	{
-		fprintf(stderr, "Error: Invalid characters in input string '%s'\n", str);
+		fprintf(stderr, "Error uint8: Invalid characters in input string '%s'\n", str);
 		exit(1);
 	}
 	return (uint8_t)value;
@@ -41,7 +41,7 @@ uint16_t str_to_uint16(const char *str)
 	}
 	if (*endptr != '\0')
 	{
-		fprintf(stderr, "Error: Invalid characters in input string '%s'\n", str);
+		fprintf(stderr, "Error uint16: Invalid characters in input string '%s'\n", str);
 		exit(1);
 	}
 	return (uint16_t)value;
@@ -61,7 +61,7 @@ uint32_t str_to_uint32(const char *str)
 	}
 	if (*endptr != '\0')
 	{
-		fprintf(stderr, "Error: Invalid characters in input string '%s'\n", str);
+		fprintf(stderr, "Error uint32: Invalid characters in input string '%s'\n", str);
 		exit(1);
 	}
 	return (uint32_t)value;
@@ -81,7 +81,7 @@ uint64_t str_to_uint64(const char *str)
 	}
 	if (*endptr != '\0')
 	{
-		fprintf(stderr, "Error: Invalid characters in input string '%s'\n", str);
+		fprintf(stderr, "Error uint64: Invalid characters in input string '%s'\n", str);
 		exit(1);
 	}
 	return (uint64_t)value;
@@ -100,7 +100,7 @@ size_t str_to_size_t(const char *str)
 	}
 	if (*endptr != '\0')
 	{
-		fprintf(stderr, "Error: Invalid characters in input string '%s'\n", str);
+		fprintf(stderr, "Error size_t: Invalid characters in input string '%s'\n", str);
 		exit(1);
 	}
 	return (size_t)value;

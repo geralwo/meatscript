@@ -22,6 +22,7 @@ typedef uint8_t OpCode;
 #define OP_ADD 0xAA
 #define OP_SUB 0xA0
 #define OP_MUL 0xA2
+#define OP_MULR 0xA4
 #define OP_DIV 0xA3
 #define OP_MOD 0xA1
 
@@ -92,6 +93,12 @@ uint8_t *bytecode_SUB(uint8_t reg, uint64_t value);
 void execute_MUL(MeatsVM *vm);
 void disasm_MUL(MeatsVM *vm);
 uint8_t *bytecode_MUL(uint8_t reg, uint64_t value);
+
+#define MULR_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define MULR_INSTR_WORD_SIZE 3
+void execute_MULR(MeatsVM *vm);
+void disasm_MULR(MeatsVM *vm);
+uint8_t *bytecode_MULR(uint8_t reg, uint8_t reg2);
 
 #define DIV_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
 #define DIV_INSTR_WORD_SIZE 3

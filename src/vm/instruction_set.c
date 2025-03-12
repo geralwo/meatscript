@@ -10,6 +10,7 @@ void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_ADD] = execute_ADD,
     [OP_SUB] = execute_SUB,
     [OP_MUL] = execute_MUL,
+    [OP_MULR] = execute_MULR,
     [OP_DIV] = execute_DIV,
     [OP_MOD] = execute_MOD,
     [OP_JMP] = execute_JMP,
@@ -31,6 +32,7 @@ void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm) = {
     [OP_ADD] = disasm_ADD,
     [OP_SUB] = disasm_SUB,
     [OP_MUL] = disasm_MUL,
+    [OP_MULR] = disasm_MULR,
     [OP_DIV] = disasm_DIV,
     [OP_MOD] = disasm_MOD,
     [OP_JMP] = disasm_JMP,
@@ -67,6 +69,10 @@ size_t get_instr_word_size(const char *instr)
 	else if (strcmp("MUL", instr) == 0)
 	{
 		return MUL_INSTR_WORD_SIZE;
+	}
+	else if (strcmp("MULR", instr) == 0)
+	{
+		return MULR_INSTR_WORD_SIZE;
 	}
 	else if (strcmp("DIV", instr) == 0)
 	{
@@ -141,6 +147,10 @@ size_t get_instr_size(const char *instr)
 	else if (strcmp("MUL", instr) == 0)
 	{
 		return MUL_INSTR_SIZE;
+	}
+	else if (strcmp("MULR", instr) == 0)
+	{
+		return MULR_INSTR_SIZE;
 	}
 	else if (strcmp("DIV", instr) == 0)
 	{

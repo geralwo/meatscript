@@ -25,7 +25,7 @@ void disasm_MUL(MeatsVM *vm)
 
 uint8_t *bytecode_MUL(uint8_t reg, uint64_t value)
 {
-	static uint8_t bytecode[DIV_INSTR_SIZE];
+	static uint8_t bytecode[MUL_INSTR_SIZE];
 	bytecode[0] = OP_MUL;
 	bytecode[1] = reg;
 

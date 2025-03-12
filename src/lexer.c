@@ -49,54 +49,52 @@ void lexer_tokenize(Lexer *lexer)
 	while (current_char(lexer) != '\0')
 	{
 		Token token;
-		char c = current_char(lexer);
-		// printf(":: lexing character '%u'\n",c);
-		if (isdigit(c))
+		// char c = current_char(lexer);
+		//  printf(":: lexing character '%u'\n",c);
+		if (isdigit(current_char(lexer)))
 		{
 			token = new_token(TOKEN_NUMBER, lexer->line);
 			int start = lexer->position;
-			while (isdigit(c) || c == '.' || c == '_' || c == 'x')
+			while (isdigit(current_char(lexer)) || current_char(lexer) == '.' || current_char(lexer) == '_' || current_char(lexer) == 'x')
 			{
 				lexer_advance(lexer);
-				c = lexer->source[lexer->position];
 			}
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
 			token.column = lexer->column;
 			// printf("lexed digit '%s' at index: %d\n",token.Value,start);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (isalpha(c))
+		else if (isalpha(current_char(lexer)))
 		{
 			token = new_token(TOKEN_IDENTIFIER, lexer->line);
 			int start = lexer->position;
 			token.column = lexer->column;
-			while (isalnum(c) || c == '_')
+			while (isalnum(current_char(lexer)) || current_char(lexer) == '_')
 			{
 				lexer_advance(lexer);
-				c = lexer->source[lexer->position];
 			}
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
 			meats_array_add(lexer->Tokens, &token);
 			// printf("lexed identifier '%s' at index: %d\n",token.Value,start);
 			// lexer_advance(lexer);
 		}
-		else if (c == '\n')
+		else if (current_char(lexer) == '\n')
 		{
-			lexer->column = 0;
 			token = new_token(TOKEN_EOL, lexer->line);
 			token.Value = "EOL";
 			token.column = lexer->column;
+			lexer->column = 0;
 			meats_array_add(lexer->Tokens, &token);
 			lexer_advance(lexer);
 		}
-		else if (c == '\r')
+		else if (current_char(lexer) == '\r')
 		{
 			lexer_advance(lexer);
 		}
-		else if (c == '\'' || c == '"')
+		else if (current_char(lexer) == '\'' || current_char(lexer) == '"')
 		{
 			token = new_token(TOKEN_STRING, lexer->line);
-			char quote = c;
+			char quote = current_char(lexer);
 			int start = lexer->position;
 			lexer_advance(lexer); // eat starting quote
 			while (current_char(lexer) != quote)
@@ -108,19 +106,20 @@ void lexer_tokenize(Lexer *lexer)
 			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == ':')
+		// math operators
+		else if (current_char(lexer) == '+' || current_char(lexer) == '-' || current_char(lexer) == '*' || current_char(lexer) == '/' || current_char(lexer) == '%')
 		{
 			token = new_token(TOKEN_OPERATOR, lexer->line);
 			token.Value = cut_string(lexer->source, lexer->position, 1);
 			token.column = lexer->column;
-			if (c == '*' || c == '/')
+			if (current_char(lexer) == '*' || current_char(lexer) == '/')
 			{
 				token.Precedence = 1;
 			}
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == '{')
+		else if (current_char(lexer) == '{')
 		{
 			token = new_token(TOKEN_LBRACE, lexer->line);
 			token.Value = "{";
@@ -128,7 +127,7 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == '}')
+		else if (current_char(lexer) == '}')
 		{
 			token = new_token(TOKEN_RBRACE, lexer->line);
 			token.Value = "}";
@@ -136,7 +135,7 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == '(')
+		else if (current_char(lexer) == '(')
 		{
 			token = new_token(TOKEN_LPAREN, lexer->line);
 			token.Value = "(";
@@ -145,7 +144,7 @@ void lexer_tokenize(Lexer *lexer)
 			meats_array_add(lexer->Tokens, &token);
 			lexer_advance(lexer);
 		}
-		else if (c == ')')
+		else if (current_char(lexer) == ')')
 		{
 			token = new_token(TOKEN_RPAREN, lexer->line);
 			token.Value = ")";
@@ -154,12 +153,12 @@ void lexer_tokenize(Lexer *lexer)
 			meats_array_add(lexer->Tokens, &token);
 			lexer_advance(lexer);
 		}
-		else if (c == '[' || c == ']')
+		else if (current_char(lexer) == '[' || current_char(lexer) == ']')
 		{
 			TODO("implement square brackets");
 			lexer_advance(lexer);
 		}
-		else if (c == '#')
+		else if (current_char(lexer) == '#')
 		{
 			token = new_token(TOKEN_HASH, lexer->line);
 			token.Value = "#";
@@ -167,7 +166,7 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == ';')
+		else if (current_char(lexer) == ';')
 		{
 			token = new_token(TOKEN_SEMICOLON, lexer->line);
 			token.Value = ";";
@@ -175,21 +174,38 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
-		else if (c == ':')
+		else if (current_char(lexer) == ':')
 		{
-			token = new_token(TOKEN_COLON, lexer->line);
-			token.Value = ":";
-			token.column = lexer->column;
 			lexer_advance(lexer);
-			meats_array_add(lexer->Tokens, &token);
+			if (isalpha(current_char(lexer)))
+			{
+				token = new_token(TOKEN_SYMBOL, lexer->line);
+				token.column = lexer->column;
+				int start = lexer->position - 1;
+				token.column = lexer->column;
+				while (isalnum(current_char(lexer)) || current_char(lexer) == '_')
+				{
+					lexer_advance(lexer);
+				}
+				token.Value = cut_string(lexer->source, start, lexer->position - start);
+				meats_array_add(lexer->Tokens, &token);
+			}
+			else
+			{
+				token = new_token(TOKEN_COLON, lexer->line);
+				token.Value = ":";
+				token.column = lexer->column;
+				lexer_advance(lexer);
+				meats_array_add(lexer->Tokens, &token);
+			}
 		}
-		else if (isspace(c))
+		else if (isspace(current_char(lexer)))
 		{
 			lexer_advance(lexer);
 		}
 		else
 		{
-			printf("Unhandled char: '%c' (%u) \n", c, c);
+			printf("Unhandled char: '%c' (%u) \n", current_char(lexer), current_char(lexer));
 			exit(2);
 		}
 	}

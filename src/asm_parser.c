@@ -85,11 +85,10 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 		Token *t = meats_array_get(asm_parser->Tokens, i);
 
 		// label declarations should only be found directly after new lines
-		if (strcmp(":", t->Value) == 0)
+		if (t->Type == TOKEN_SYMBOL)
 		{
-			Token *label_name = meats_array_get(asm_parser->Tokens, ++i);
 			ASM_Label label;
-			label.name = copy_string(label_name->Value);
+			label.name = copy_string(t->Value);
 			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
 			// printf("Found Label at %ld: '%s' -> %ld\n", label_name->line, label.name, label.position);
@@ -115,33 +114,22 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 		// skip (JMPE_WORD_SIZE - 1) words
 		// increment bytecode position by JMPE_INSTR_SIZE
 		// but not all instruction can work with labels.
+		// all labels are always the last argument.
 		else
 		{
-			word_size = get_instr_word_size(t->Value);
-
-			// check the last argument for a ':'
-			if (word_size > 0 && i + word_size - 1 < asm_parser->Tokens->Count)
-			{
-				Token *last_arg = meats_array_get(asm_parser->Tokens, i + word_size - 1);
-				if (strcmp(":", last_arg->Value) != 0)
-				{
-					word_size -= 1;
-				}
-			}
-
-			// ppdate Bytecode Position
+			word_size = (get_instr_word_size(t->Value) > 0) ? (get_instr_word_size(t->Value) - 1) : 0;
 			bytecode_position += get_instr_size(t->Value);
-			// printf("Skipping %ld words for '%s' | bytecode pos: %ld\n", word_size, t->Value, bytecode_position);
+			// printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
 			i += word_size;
 		}
 	}
 
 	// printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
-	//  for (size_t i = 0; i < asm_label_count; i++)
-	//  {
-	//  	printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
-	//  }
-	//  printf(":::::::\n");
+	// for (size_t i = 0; i < asm_label_count; i++)
+	// {
+	// 	printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
+	// }
+	// printf(":::::::\n");
 }
 
 size_t get_addr_from_label(const char *name)
@@ -163,7 +151,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 	while (current_asm_token(asm_parser)->Type != TOKEN_EOF)
 	{
 		Token *t = eat_asm_token(asm_parser);
-		// printf("current ASM token: '%s' idx: %ld\n", t->Value, asm_parser->Position);
+		// printf("current ASM token: '%s' [%s]idx: %ld\n", t->Value, tokenType_name(t->Type), asm_parser->Position);
 		if (strcmp("MOV", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -212,6 +200,14 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MUL(reg, val), MUL_INSTR_SIZE);
 		}
+		else if (strcmp("MULR", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_MULR(reg, reg2), MULR_INSTR_SIZE);
+		}
 		else if (strcmp("DIV", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -234,10 +230,9 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 				break;
 			Token *addrt = eat_asm_token(asm_parser);
 			uint64_t addr;
-			if (strcmp(addrt->Value, ":") == 0)
+			if (addrt->Type == TOKEN_SYMBOL)
 			{
-				Token *label_name = eat_asm_token(asm_parser);
-				addr = get_addr_from_label(label_name->Value);
+				addr = get_addr_from_label(addrt->Value);
 			}
 			else
 			{
@@ -253,10 +248,10 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint8_t reg1 = parse_register(reg1t->Value);
 			uint8_t reg2 = parse_register(reg2t->Value);
 			uint64_t addr;
-			if (strcmp(addrt->Value, ":") == 0)
+			if (addrt->Type == TOKEN_SYMBOL)
 			{
-				Token *label_name = eat_asm_token(asm_parser);
-				addr = get_addr_from_label(label_name->Value);
+				// printf(":: getting label value '%s': %ld", addrt->Value, get_addr_from_label(addrt->Value));
+				addr = get_addr_from_label(addrt->Value);
 			}
 			else
 			{
@@ -266,36 +261,37 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else if (strcmp("JMPZ", t->Value) == 0)
 		{
-			// printf("JMPZ PARSE\n");
 			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
 			Token *addrt = eat_asm_token(asm_parser);
 			uint64_t addr;
-			if (strcmp(addrt->Value, ":") == 0)
+			if (addrt->Type == TOKEN_SYMBOL)
 			{
-				Token *label_name = eat_asm_token(asm_parser);
-				addr = get_addr_from_label(label_name->Value);
+				// printf(":: getting label value '%s': %ld", addrt->Value, get_addr_from_label(addrt->Value));
+				addr = get_addr_from_label(addrt->Value);
 			}
 			else
 			{
 				addr = str_to_uint64(addrt->Value);
 			}
-			bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(parse_register(regt->Value), addr), JMPZ_INSTR_SIZE);
+			bytecode_append(asm_parser->Bytecode, bytecode_JMPZ(reg, addr), JMPZ_INSTR_SIZE);
 		}
 		else if (strcmp("JMPNZ", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
 			Token *addrt = eat_asm_token(asm_parser);
 			uint64_t addr;
-			if (strcmp(addrt->Value, ":") == 0)
+			if (addrt->Type == TOKEN_SYMBOL)
 			{
-				Token *label_name = eat_asm_token(asm_parser);
-				addr = get_addr_from_label(label_name->Value);
+				// printf(":: getting label value '%s': %ld", addrt->Value, get_addr_from_label(addrt->Value));
+				addr = get_addr_from_label(addrt->Value);
 			}
 			else
 			{
 				addr = str_to_uint64(addrt->Value);
 			}
-			bytecode_append(asm_parser->Bytecode, bytecode_JMPNZ(parse_register(regt->Value), addr), JMPNZ_INSTR_SIZE);
+			bytecode_append(asm_parser->Bytecode, bytecode_JMPNZ(reg, addr), JMPNZ_INSTR_SIZE);
 		}
 		else if (strcmp("DEBUG", t->Value) == 0)
 		{
@@ -324,6 +320,11 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			bytecode_append(asm_parser->Bytecode, bytecode_POP(reg), POP_INSTR_SIZE);
 		}
 		else if (strcmp(":", t->Value) == 0)
+		{
+			// printf("ignoring label\n");
+			eat_asm_token(asm_parser);
+		}
+		else if (t->Type == TOKEN_SYMBOL)
 		{
 			// printf("ignoring label\n");
 			eat_asm_token(asm_parser);

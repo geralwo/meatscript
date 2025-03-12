@@ -17,6 +17,7 @@ typedef enum
     TOKEN_HASH,
     TOKEN_COLON,
     TOKEN_SEMICOLON,
+    TOKEN_SYMBOL,
     TOKEN_EOL,
     TOKEN_EOF,
     TOKEN_ANY,
@@ -79,6 +80,8 @@ static inline const char *tokenType_name(TokenType type)
         return "COLON";
     case TOKEN_SEMICOLON:
         return "SEMICOLON";
+    case TOKEN_SYMBOL:
+        return "SYMBOL";
     default:
         return "UNKNOWN";
     }
