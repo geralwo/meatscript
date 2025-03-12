@@ -18,6 +18,7 @@ typedef uint8_t OpCode;
 #define OP_MOV 0xDA
 #define OP_MOVI 0xDB
 #define OP_MOVE 0xDC
+#define OP_MOVER 0xDD
 
 #define OP_ADD 0xA0
 #define OP_ADDR 0xA1
@@ -79,6 +80,12 @@ uint8_t *bytecode_MOVI(uint8_t reg, uint32_t value);
 void execute_MOVE(MeatsVM *vm);
 void disasm_MOVE(MeatsVM *vm);
 uint8_t *bytecode_MOVE(uint8_t reg, uint64_t value);
+
+#define MOVER_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define MOVER_INSTR_WORD_SIZE 3
+void execute_MOVER(MeatsVM *vm);
+void disasm_MOVER(MeatsVM *vm);
+uint8_t *bytecode_MOVER(uint8_t reg, uint8_t reg2);
 
 #define ADD_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
 #define ADD_INSTR_WORD_SIZE 3

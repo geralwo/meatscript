@@ -91,7 +91,7 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 			label.name = copy_string(t->Value);
 			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
-			printf("Found Label at %ld: '%s' -> %ld\n", t->line, label.name, label.position);
+			// printf("Found Label at %ld: '%s' -> %ld\n", t->line, label.name, label.position);
 		}
 		// if current token is ; skip all tokens up to eol
 		else if (t->Type == TOKEN_SEMICOLON)
@@ -123,16 +123,16 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 				word_size -= 1;
 		}
 		bytecode_position += get_instr_size(t->Value);
-		printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
+		// printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
 		i += word_size;
 	}
 
-	printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
-	for (size_t i = 0; i < asm_label_count; i++)
-	{
-		printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
-	}
-	printf(":::::::\n");
+	// printf(":: finished asm preproccessor with %ld labels\n", asm_label_count);
+	// for (size_t i = 0; i < asm_label_count; i++)
+	// {
+	// 	printf("Label: %s = %ld\n", asm_labels[i].name, asm_labels[i].position);
+	// }
+	// printf(":::::::\n");
 }
 
 size_t get_addr_from_label(const char *name)
@@ -154,7 +154,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 	while (current_asm_token(asm_parser)->Type != TOKEN_EOF)
 	{
 		Token *t = eat_asm_token(asm_parser);
-		printf("current ASM token: '%s' [%s]idx: %ld\n", t->Value, tokenType_name(t->Type), asm_parser->Position);
+		// printf("current ASM token: '%s' [%s]idx: %ld\n", t->Value, tokenType_name(t->Type), asm_parser->Position);
 		if (strcmp("MOV", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -179,6 +179,14 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOVE(reg, val), MOVE_INSTR_SIZE);
 		}
+		else if (strcmp("MOVER", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_MOVER(reg, reg2), MOVER_INSTR_SIZE);
+		}
 		else if (strcmp("ADD", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -187,6 +195,14 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_ADD(reg, val), ADD_INSTR_SIZE);
 		}
+		else if (strcmp("ADDR", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_ADDR(reg, reg2), ADDR_INSTR_SIZE);
+		}
 		else if (strcmp("SUB", t->Value) == 0)
 		{
 			Token *regt = eat_asm_token(asm_parser);
@@ -194,6 +210,14 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint8_t reg = parse_register(regt->Value);
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_SUB(reg, val), SUB_INSTR_SIZE);
+		}
+		else if (strcmp("SUBR", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_SUBR(reg, reg2), SUBR_INSTR_SIZE);
 		}
 		else if (strcmp("MUL", t->Value) == 0)
 		{
@@ -217,7 +241,15 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			Token *valt = eat_asm_token(asm_parser);
 			uint8_t reg = parse_register(regt->Value);
 			uint64_t val = str_to_uint64(valt->Value);
-			bytecode_append(asm_parser->Bytecode, bytecode_DIV(reg, val), MUL_INSTR_SIZE);
+			bytecode_append(asm_parser->Bytecode, bytecode_DIV(reg, val), DIV_INSTR_SIZE);
+		}
+		else if (strcmp("DIVR", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_DIVR(reg, reg2), DIVR_INSTR_SIZE);
 		}
 		else if (strcmp("MOD", t->Value) == 0)
 		{
@@ -226,6 +258,14 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 			uint8_t reg = parse_register(regt->Value);
 			uint64_t val = str_to_uint64(valt->Value);
 			bytecode_append(asm_parser->Bytecode, bytecode_MOD(reg, val), MUL_INSTR_SIZE);
+		}
+		else if (strcmp("MODR", t->Value) == 0)
+		{
+			Token *regt = eat_asm_token(asm_parser);
+			uint8_t reg = parse_register(regt->Value);
+			Token *reg2t = eat_asm_token(asm_parser);
+			uint8_t reg2 = parse_register(reg2t->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_MODR(reg, reg2), MODR_INSTR_SIZE);
 		}
 		else if (strcmp("JMP", t->Value) == 0)
 		{

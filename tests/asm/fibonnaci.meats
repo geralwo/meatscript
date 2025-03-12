@@ -1,0 +1,23 @@
+asm
+{
+    ; Initialize registers
+    MOV r1 10      ; Set n = 10 (change this for different Fibonacci numbers)
+    MOV r2 0       ; Fib(0) = 0
+    MOV r3 1       ; Fib(1) = 1
+
+    ; Edge cases for small n
+    JMPE r1 r2 :end ; If n == 0, result is already in r2
+    JMPE r1 r3 :end ; If n == 1, result is already in r3
+
+    :loop
+    MOVER r4 r3      ; Move r3 to r4 (backup current Fib number)
+    ADDR r3 r2     ; r3 = r3 + r2 (next Fibonacci number)
+    MOVER r2 r4      ; Move old r3 to r2 (update previous Fibonacci number)
+    SUB r1 1       ; Decrement n
+    JMPNZ r1 :loop ; If n greater than 0, continue loop
+
+    :end
+    MOVER r7 r3     ; Store the final result in r30
+    MOV r30 0
+    HALT
+}
