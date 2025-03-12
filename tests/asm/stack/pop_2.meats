@@ -1,0 +1,42 @@
+asm
+{
+    MOV r1 10       ; Store 10 in r1
+    MOV r2 20       ; Store 20 in r2
+    MOV r3 30       ; Store 30 in r3
+    ;MOV r30 1       ; Assume failure, will be set to 0 if correct
+
+    PUSH r1         ; Push 10 onto the stack
+    PUSH r2         ; Push 20 onto the stack
+    PUSH r3         ; Push 30 onto the stack
+
+    POP r4          ; Pop into r4 (should be 30)
+    POP r5          ; Pop into r5 (should be 20)
+    POP r6          ; Pop into r6 (should be 10)
+
+    ADD r4 5        ; r4 = 30 + 5 = 35
+    ADD r5 2        ; r5 = 20 + 2 = 22
+    ADD r6 3        ; r6 = 10 + 3 = 13
+
+    MOVER r7 r4     ; r7 = 35
+    MOVER r8 r5     ; r8 = 22
+    MOVER r9 r6     ; r9 = 13
+
+    SUB r7 35       ; r7 -= 35 (should be 0 if correct)
+    JMPNZ r7 :fail  ; If r7 is not zero, fail
+
+    SUB r8 22       ; r8 -= 22 (should be 0 if correct)
+    JMPNZ r8 :fail  ; If r8 is not zero, fail
+
+    SUB r9 13       ; r9 -= 13 (should be 0 if correct)
+    JMPNZ r9 :fail  ; If r9 is not zero, fail
+
+    JMP :success
+
+    :fail
+    MOV r30 1
+    HALT
+
+    :success
+    MOV r30 0
+    HALT
+}

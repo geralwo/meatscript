@@ -1,5 +1,8 @@
-#include "vm.h"
+#include <stdio.h>
 #include <stdint.h>
+#include "vm.h"
+#include "vm/instruction_set.h"
+#include "util.h"
 
 // Function to set a register's value
 void vm_set_register(MeatsVM *vm, uint8_t reg, uint64_t value)
@@ -36,6 +39,80 @@ void vm_unset_flag(MeatsVM *vm, uint64_t flag)
 int vm_flag_is_set(MeatsVM *vm, uint64_t flag)
 {
     return (vm->Registers[31] & flag) != 0;
+}
+
+void meats_vm_dump_bytecode(MeatsVM *vm)
+{
+    if (vm->ProgramLength == 0)
+    {
+        printf(":: VM has no bytecode program\n");
+    }
+    else
+    {
+        printf("VM Program Size: %ld\n", vm->ProgramLength);
+        for (size_t i = 0; i < vm->ProgramLength; i++)
+        {
+            printf("  %02x ", vm->Program[i]);
+            if ((i + 1) % 8 == 0)
+                printf("\n");
+        }
+        printf("\n");
+    }
+}
+
+void meats_vm_print_stats(MeatsVM *vm)
+{
+    printf("Bytecode Size: %ld\tR31: %ld\nHeapPtr: %p\tHeapSize: %ld\n", vm->ProgramLength, vm_get_register(vm, 31), (void *)vm->Heap, vm->HeapSize);
+}
+
+void meats_vm_print_asm(MeatsVM *vm)
+{
+    printf("::: ASM BEGIN :::\n");
+    vm->PC = 0;
+    while (vm->PC < vm->ProgramLength)
+    {
+        uint8_t opcode = fetch(vm);
+        if (disasm_table[opcode])
+            disasm_table[opcode](vm);
+        else
+        {
+            printf("DISASM: Unknown instruction: 0x%.2X at PC=%ld\n", opcode, vm->PC - 1);
+            break;
+        }
+    }
+    printf("::: ASM END :::\n");
+    vm->PC = 0;
+}
+
+void meats_vm_dump_mem(MeatsVM *vm)
+{
+    for (int i = 0; i < (int)vm->HeapSize; i++)
+    {
+        if (i % 8 == 0)
+            printf("\n");
+        printf("m%u", vm->Heap[i]);
+    }
+    printf("\n");
+    for (int i = 0; i < VM_STACK_SIZE; i++)
+    {
+        if (i % 8 == 0)
+            printf("\n");
+        printf("%lu", vm->Stack[i]);
+    }
+    printf("\n");
+}
+
+void meats_vm_dump_registers(MeatsVM *vm)
+{
+    for (int i = 0; i < VM_REGISTER_COUNT; i++)
+    {
+        printf("  [  r%.02d: ", i);
+        print_bits(vm->Registers[i]);
+        printf(" = %lu  ", vm->Registers[i]);
+        printf("] \n");
+        if ((i + 1) % 4 == 0)
+            printf("\n");
+    }
 }
 
 size_t vm_bytes_to_size_t(const uint8_t bytes[], size_t byte_count)

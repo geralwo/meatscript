@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 #define VM_REGISTER_COUNT 32
-#define VM_STACK_SIZE 16384
+#define VM_STACK_SIZE 1024
 #define VM_HEAP_START_SIZE 4096
 
 #define VM_FLAG_ZERO (1ULL << 0)
@@ -15,10 +15,15 @@
 #define VM_FETCH_BUFFER_SIZE sizeof(size_t)
 #include "vm/bytecode.h"
 
+// Special purpose registers
+// r0  dont change
+// r29 stack pointer
+// r30 return code
+// r31 flags
 typedef struct
 {
 	uint64_t Registers[VM_REGISTER_COUNT]; // General-purpose registers
-	uint8_t Stack[VM_STACK_SIZE];	       // Stack
+	uint64_t Stack[VM_STACK_SIZE];	       // Stack
 	size_t PC;			       // Program Counter
 	size_t ProgramLength;
 	uint8_t *Program;
@@ -62,5 +67,6 @@ void meats_vm_dump_registers(MeatsVM *vm);
 void meats_vm_dump_bytecode(MeatsVM *vm);
 void meats_vm_print_asm(MeatsVM *vm);
 void meats_vm_print_stats(MeatsVM *vm);
+void meats_vm_dump_mem(MeatsVM *vm);
 
 #endif // VM_H

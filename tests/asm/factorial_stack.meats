@@ -1,0 +1,23 @@
+asm
+{
+	DEBUG 1
+	MOV r1 20         ; Set n = 20 result: 2432902008176640000
+	MOV r2 1         ; r2 = result (start at 1)
+	MOV r3 0         ; Counter for loop
+	MOV r30 0        ; Return code = success
+
+	; Check if n is 0 or 1 (early exit)
+	JMPE r1 r3 :end
+
+	:loop
+	PUSH r2          ; Save result on stack
+	MULR r2 r1       ; result *= n
+	SUB r1 1         ; n--
+	JMPNZ r1 :loop   ; if n > 0, repeat
+
+	:end
+	POP r4           ; Restore last result from stack
+	MOVER r3 r2      ; Store final result in r3
+	MOV r30 0        ; Return code 0, indicating success
+	HALT
+}

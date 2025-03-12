@@ -14,9 +14,8 @@ void disasm_NOP(MeatsVM *vm)
 	printf("NULL\n");
 }
 
-uint8_t *bytecode_NOP(MeatsVM *vm)
+uint8_t *bytecode_NOP()
 {
-	(void)vm;
 	static uint8_t bytecode[NOP_INSTR_SIZE];
 	bytecode[0] = 0x00;
 	return bytecode;

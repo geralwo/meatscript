@@ -1,0 +1,8 @@
+asm
+{
+	MOV r1 0
+	MOV r30 3
+	PUSH r1
+	POP r30
+	HALT
+}
