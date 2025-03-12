@@ -143,6 +143,22 @@ void lexer_tokenize(Lexer *lexer)
 			lexer_advance(lexer);
 			meats_array_add(lexer->Tokens, &token);
 		}
+		else if (current_char(lexer) == '<')
+		{
+			token = new_token(TOKEN_LT, lexer->line);
+			token.Value = "<";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
+		else if (current_char(lexer) == '>')
+		{
+			token = new_token(TOKEN_GT, lexer->line);
+			token.Value = ">";
+			token.column = lexer->column;
+			lexer_advance(lexer);
+			meats_array_add(lexer->Tokens, &token);
+		}
 		else if (current_char(lexer) == '}')
 		{
 			token = new_token(TOKEN_RBRACE, lexer->line);

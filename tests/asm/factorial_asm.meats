@@ -1,17 +1,20 @@
 asm
 {
-	MOVE r1 8192
-	MOVE r2 1
-	MOVE r3 1
+	DEBUG 1
+	; Compute factorial of r1 and store in r3
+	MOV r1 5      ; Set n = 5 (change this to test other values)
+	MOV r2 1      ; r2 = result (start at 1)
 
-	:main
-	JMPE r1 r3 :exit
-	MULR r2 r3       
-	ADD r3 1    
-	JMPE r3 r1 :exit 
-	JMP :main
+	; If n == 0 or n == 1, result is 1
+	JMPE r1 r2 :end
 
-	:exit
-	MOV r30 0
+	:loop
+	MULR r2 r1     ; result *= n
+	SUB r1 1      ; n--
+	JMPNZ r1 :loop ; if n > 0, repeat
+
+	:end
+	MOVER r3 r2   ; Store final result in r3
+	MOV r30 0     ; Return code 0, indicating success
 	HALT
 }

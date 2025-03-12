@@ -14,6 +14,8 @@ typedef enum
     TOKEN_RPAREN,
     TOKEN_LBRACE,
     TOKEN_RBRACE,
+    TOKEN_LT,
+    TOKEN_GT,
     TOKEN_HASH,
     TOKEN_COLON,
     TOKEN_COMMA,
@@ -63,6 +65,10 @@ static inline const char *tokenType_name(TokenType type)
         return "BINARY OPERATOR";
     case TOKEN_EQUAL:
         return "EQUAL";
+    case TOKEN_LT:
+        return "LESS THAN";
+    case TOKEN_GT:
+        return "GREATER THAN";
     case TOKEN_EOL:
         return "EOL";
     case TOKEN_EOF:

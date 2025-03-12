@@ -1,0 +1,24 @@
+asm
+{
+    ; Initialize registers
+    MOV r1 10      ; Set n = 10 (calculate the 10th Fibonacci number)
+    MOV r2 0       ; r2 = F(0) = 0
+    MOV r3 1       ; r3 = F(1) = 1
+    MOV r4 0       ; Temporary register
+
+    ; If n <= 1, return the value in r1 (F(0) or F(1))
+    JMPZ r1 :done
+
+    :loop
+    ADDR r4 r2     ; r4 = r2 + r3 (new Fibonacci value)
+    MOVER r2 r3    ; r2 = r3 (move F(n-1) to F(n-2))
+    MOVER r3 r4    ; r3 = r4 (move new value to F(n-1))
+
+    SUB r1 1       ; n--
+    JMPNZ r1 :loop ; Repeat until n == 0
+
+    :done
+    MOVER r3 r2    ; Store final result in r3 (F(n))
+    MOV r30 0      ; Return code 0, indicating success
+    HALT
+}

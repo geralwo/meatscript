@@ -5,7 +5,13 @@
 
 
 - Full implementation of instruction set [⭕]
-	- Arithmetic [✅]
+	- Data Manipulation
+		- MOV  	[✅]
+		- MOVI  [✅]
+		- MOVE  [✅]
+		- MOVER [✅]
+
+	- Arithmetic 	[⭕]
 		- ADD 	[✅]
 		- SUB 	[✅]
 		- MUL 	[✅]
