@@ -19,12 +19,16 @@ typedef uint8_t OpCode;
 #define OP_MOVI 0xDB
 #define OP_MOVE 0xDC
 
-#define OP_ADD 0xAA
-#define OP_SUB 0xA0
-#define OP_MUL 0xA2
-#define OP_MULR 0xA4
-#define OP_DIV 0xA3
-#define OP_MOD 0xA1
+#define OP_ADD 0xA0
+#define OP_ADDR 0xA1
+#define OP_SUB 0xA2
+#define OP_SUBR 0xA3
+#define OP_MUL 0xA4
+#define OP_MULR 0xA5
+#define OP_DIV 0xA6
+#define OP_DIVR 0xA7
+#define OP_MOD 0xA8
+#define OP_MODR 0xA9
 
 #define OP_JMP 0xFA
 #define OP_JMPE 0xFF
@@ -82,11 +86,23 @@ void execute_ADD(MeatsVM *vm);
 void disasm_ADD(MeatsVM *vm);
 uint8_t *bytecode_ADD(uint8_t reg, uint64_t value);
 
+#define ADDR_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define ADDR_INSTR_WORD_SIZE 3
+void execute_ADDR(MeatsVM *vm);
+void disasm_ADDR(MeatsVM *vm);
+uint8_t *bytecode_ADDR(uint8_t reg, uint8_t reg2);
+
 #define SUB_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
 #define SUB_INSTR_WORD_SIZE 3
 void execute_SUB(MeatsVM *vm);
 void disasm_SUB(MeatsVM *vm);
 uint8_t *bytecode_SUB(uint8_t reg, uint64_t value);
+
+#define SUBR_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define SUBR_INSTR_WORD_SIZE 3
+void execute_SUBR(MeatsVM *vm);
+void disasm_SUBR(MeatsVM *vm);
+uint8_t *bytecode_SUBR(uint8_t reg, uint8_t reg2);
 
 #define MUL_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
 #define MUL_INSTR_WORD_SIZE 3
@@ -106,11 +122,23 @@ void execute_DIV(MeatsVM *vm);
 void disasm_DIV(MeatsVM *vm);
 uint8_t *bytecode_DIV(uint8_t reg, uint64_t value);
 
+#define DIVR_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define DIVR_INSTR_WORD_SIZE 3
+void execute_DIVR(MeatsVM *vm);
+void disasm_DIVR(MeatsVM *vm);
+uint8_t *bytecode_DIVR(uint8_t reg, uint8_t reg2);
+
 #define MOD_INSTR_SIZE (sizeof(OpCode) + 1 + sizeof(uint64_t))
 #define MOD_INSTR_WORD_SIZE 3
 void execute_MOD(MeatsVM *vm);
 void disasm_MOD(MeatsVM *vm);
 uint8_t *bytecode_MOD(uint8_t reg, uint64_t value);
+
+#define MODR_INSTR_SIZE (sizeof(OpCode) + 1 + 1)
+#define MODR_INSTR_WORD_SIZE 3
+void execute_MODR(MeatsVM *vm);
+void disasm_MODR(MeatsVM *vm);
+uint8_t *bytecode_MODR(uint8_t reg, uint8_t reg2);
 
 #define JMP_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t))
 #define JMP_INSTR_WORD_SIZE 2
