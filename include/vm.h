@@ -16,7 +16,7 @@
 #include "vm/bytecode.h"
 
 // Special purpose registers
-// r0  dont change
+// r0  program counter
 // r29 stack pointer
 // r30 return code
 // r31 flags
@@ -26,8 +26,8 @@ typedef struct
 	uint64_t Stack[VM_STACK_SIZE];	       // Stack
 	size_t PC;			       // Program Counter
 	size_t ProgramLength;
-	uint8_t *Program;
 	size_t HeapSize;
+	uint8_t *Program;
 	uint8_t *Heap;
 
 } MeatsVM;

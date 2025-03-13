@@ -1,5 +1,6 @@
 #ifndef TOKEN_H
 #define TOKEN_H
+#include <stdint.h>
 #include <stdlib.h>
 // Token type enumeration
 typedef enum
@@ -34,7 +35,7 @@ typedef struct
     size_t line;
     size_t column;
     int Precedence;
-    size_t ArrayIndex;
+    uint64_t Metadata;
 } Token;
 
 static inline Token new_token(TokenType type, size_t line_number)
@@ -44,7 +45,7 @@ static inline Token new_token(TokenType type, size_t line_number)
     token.Value = NULL;
     token.line = line_number;
     token.column = -1;
-    token.ArrayIndex = 0;
+    token.Metadata = 0;
     token.Precedence = 0;
     return token;
 }

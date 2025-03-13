@@ -1,6 +1,5 @@
 asm
 {
-	DEBUG 1
 	; Compute factorial
 	MOVE r1 20      ; Set n = 20 result: 2432902008176640000
 	MOV r2 1        ; r2 = result (start at 1)

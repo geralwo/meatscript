@@ -24,6 +24,8 @@
 		"utility": "c",
 		"vm.h": "c",
 		"random": "c",
-		"unistd.h": "c"
+		"unistd.h": "c",
+		"lexer.h": "c",
+		"parser.h": "c"
 	}
 }

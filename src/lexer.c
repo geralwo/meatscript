@@ -101,6 +101,7 @@ void lexer_tokenize(Lexer *lexer)
 			{
 				lexer_advance(lexer); // eat everything between quotes
 			}
+			token.Metadata = lexer->position - start;
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
 			lexer_advance(lexer); // eat closing quote
 			token.column = lexer->column;
