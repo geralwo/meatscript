@@ -1,5 +1,5 @@
 # meats
-## mobile, easy and type scripting language
+## mobile, easy and typed scripting language
 
 ## example hello world:
 ```
