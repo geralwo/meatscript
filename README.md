@@ -1,6 +1,14 @@
 # meats
 ## mobile, easy and type scripting language
 
+## example hello world:
+```
+const str = "hello "
+var name = io.read_line
+name.strip! '\n'
+printn "hello $name"
+```
+
 ### Todo:
 
 
