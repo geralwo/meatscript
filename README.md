@@ -63,6 +63,6 @@ printn "hello $name"
 	- storing strings [✅]
 		- very basic
 	- retrieving strings [✅]
-		- very basic
+		- only from static memory, very basic
 	- strlen [❌]
 - Error Reporting [🤷]
