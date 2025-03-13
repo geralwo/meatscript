@@ -56,6 +56,9 @@ printn "hello $name"
    	- Keywords [⭕]
    	  	- asm [✅]
 - Floating Point Numbers [❌]
+- Memory Management [❌]
+	- Allocation [❌]
+   	- Deallocation [❌]
 - Strings [⭕]
 	- storing strings [✅]
 		- very basic
