@@ -36,6 +36,11 @@
    	- Stack Manipulation [✅]
 		- PUSH [✅]
 		- POP  [✅]
+	- IO [⭕]
+		- PRINT [✅]
+		- SCAN  [❌]
+
+
 - ASM Parser [✅]
 	- ASM Labels :LABEL [✅]
 	- Comment Token ';' [✅]
@@ -43,5 +48,10 @@
    	- Keywords [⭕]
    	  	- asm [✅]
 - Floating Point Numbers [❌]
-- Strings [❌]
+- Strings [⭕]
+	- storing strings [✅]
+		- very basic
+	- retrieving strings [✅]
+		- very basic
+	- strlen [❌]
 - Error Reporting [🤷]
