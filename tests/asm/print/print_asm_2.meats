@@ -1,0 +1,14 @@
+asm
+{
+JMP :main
+
+:alphabet
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ
+"
+:main
+PRINT 1 2 :alphabet             ; prints AB to stdout
+
+MOV r30 0
+HALT
+
+}
