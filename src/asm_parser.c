@@ -129,6 +129,10 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 		{
 			bytecode_position += strlen(t->Value);
 		}
+		else if (t->Type == TOKEN_NUMBER)
+		{
+			bytecode_position += 1;
+		}
 		bytecode_position += get_instr_size(t->Value);
 		// printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
 		i += word_size;

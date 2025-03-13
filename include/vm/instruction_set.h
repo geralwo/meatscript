@@ -11,36 +11,34 @@ typedef uint8_t OpCode;
 // E = Exiting, starting, running
 // F = Jumping, Functions
 
-#define OP_NOP 0x00
+#define OP_NOP 0x00   // 0
+#define OP_HALT 0xE0  // 224
+#define OP_DEBUG 0xED // 237
+#define OP_PRINT 0xEE // 238
 
-#define OP_HALT 0xE0
-#define OP_DEBUG 0xED
+#define OP_MOV 0xDA   // 218
+#define OP_MOVI 0xDB  // 219
+#define OP_MOVE 0xDC  // 220
+#define OP_MOVER 0xDD // 221
 
-#define OP_PRINT 0xEE
+#define OP_ADD 0xA0  // 160
+#define OP_ADDR 0xA1 // 161
+#define OP_SUB 0xA2  // 162
+#define OP_SUBR 0xA3 // 163
+#define OP_MUL 0xA4  // 164
+#define OP_MULR 0xA5 // 165
+#define OP_DIV 0xA6  // 166
+#define OP_DIVR 0xA7 // 167
+#define OP_MOD 0xA8  // 168
+#define OP_MODR 0xA9 // 169
 
-#define OP_MOV 0xDA
-#define OP_MOVI 0xDB
-#define OP_MOVE 0xDC
-#define OP_MOVER 0xDD
+#define OP_JMP 0xFA   // 250
+#define OP_JMPE 0xFF  // 255
+#define OP_JMPZ 0xF0  // 240
+#define OP_JMPNZ 0xF1 // 241
 
-#define OP_ADD 0xA0
-#define OP_ADDR 0xA1
-#define OP_SUB 0xA2
-#define OP_SUBR 0xA3
-#define OP_MUL 0xA4
-#define OP_MULR 0xA5
-#define OP_DIV 0xA6
-#define OP_DIVR 0xA7
-#define OP_MOD 0xA8
-#define OP_MODR 0xA9
-
-#define OP_JMP 0xFA
-#define OP_JMPE 0xFF
-#define OP_JMPZ 0xF0
-#define OP_JMPNZ 0xF1
-
-#define OP_PUSH 0xC1
-#define OP_POP 0xC0
+#define OP_PUSH 0xC1 // 193
+#define OP_POP 0xC0  // 192
 
 extern void (*disasm_table[UINT8_MAX + 1])(MeatsVM *vm);
 extern void (*execute_table[UINT8_MAX + 1])(MeatsVM *vm);

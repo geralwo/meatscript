@@ -1,0 +1,46 @@
+asm
+{
+	JMP :main
+	
+	:good
+	"YOU MADE IT 🤠
+	"
+
+	:GOOD_ENDING
+	PRINT 1 16 :good
+	PUSH r0
+	POP r30
+	JMP :end
+
+	:main
+	MOVE r1 1337
+	MOVE r2 500
+	PUSH r1
+	PUSH r2
+	PUSH r0
+	
+	ADDR r1 r2
+	SUBR r1 r0
+	MULR r2 r1
+	MODR r2 r1
+	DIVR r2 r1
+	
+	PUSH r2
+	PUSH r1
+	
+	:POP
+	POP r3
+	POP r2
+	POP r1
+	
+	JMPE r1 r2 :GOOD_ENDING
+	
+	MOVE r1 1
+	PUSH r1
+	POP r0
+	PRINT 1 1 :good
+	JMP :end
+	
+	:end
+	HALT
+}

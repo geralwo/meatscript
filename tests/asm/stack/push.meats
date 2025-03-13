@@ -13,12 +13,12 @@ asm
 
 	:main
 	MOVE r1 1337
-	PUSH r1 ; 1337
-	PUSH r0 ; 0
+	PUSH r1 
+	PUSH r0 
 
 	:POP
-	POP r3 ; 0
-	POP r2  ; 1337
+	POP r3
+	POP r2
 	JMPE r1 r2 :GOOD_ENDING
 
 	:end

@@ -262,8 +262,8 @@ void print_bytes(uint8_t *data, size_t size)
 		// printf("Bytecode bytes:\n");
 		for (size_t i = 0; i < size; i++)
 		{
-			printf("[%ld 0x%02x]\t", i, data[i]);
-			if ((i + 1) % 8 == 0)
+			printf("{%02ld: 0x%02x} ", i, data[i]);
+			if ((i + 1) % 4 == 0)
 			{
 				printf("\n");
 			}
