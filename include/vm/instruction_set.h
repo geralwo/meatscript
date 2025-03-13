@@ -12,8 +12,11 @@ typedef uint8_t OpCode;
 // F = Jumping, Functions
 
 #define OP_NOP 0x00
+
 #define OP_HALT 0xE0
 #define OP_DEBUG 0xED
+
+#define OP_PRINT 0xEE
 
 #define OP_MOV 0xDA
 #define OP_MOVI 0xDB
@@ -182,5 +185,12 @@ uint8_t *bytecode_PUSH(uint8_t reg);
 void execute_POP(MeatsVM *vm);
 void disasm_POP(MeatsVM *vm);
 uint8_t *bytecode_POP(uint8_t reg);
+
+#define PRINT_INSTR_SIZE (sizeof(OpCode) + sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint64_t))
+#define PRINT_INSTR_WORD_SIZE 4
+void execute_PRINT(MeatsVM *vm);
+void disasm_PRINT(MeatsVM *vm);
+uint8_t *bytecode_PRINT(uint64_t fd, uint64_t addr, uint64_t size);
+uint8_t *bytecode_STRING(const char *str);
 
 #endif // INSTRUCTIONSET_H

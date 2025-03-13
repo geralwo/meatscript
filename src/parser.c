@@ -41,6 +41,7 @@ void parser_init(Parser *parser, Lexer *lexer)
 	parser->Lexer = lexer;
 	parser->position = 0;
 	parser->AST = meats_array_new(sizeof(AST_Node));
+	parser->Labels = meats_array_new(sizeof(ASM_Label));
 }
 void parser_free(Parser *parser)
 {
@@ -94,7 +95,7 @@ AST_Node *parse_asm(Parser *parser)
 	parser_advance(parser);
 	// printf("parsed asm block with %ld tokens... ", asm_tokens->Count);
 	ASM_Parser asm_parser;
-	asm_parser_init(&asm_parser, asm_tokens);
+	asm_parser_init(&asm_parser, asm_tokens, parser->Labels);
 	asm_parser_parse(&asm_parser);
 	// printf("asm parser produced '%ld' bytes:\n", asm_parser.Bytecode->size);
 	// print_bytes(asm_parser.Bytecode->bytes, asm_parser.Bytecode->size);

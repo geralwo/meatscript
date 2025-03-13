@@ -17,7 +17,7 @@ void execute_PUSH(MeatsVM *vm)
 	vm->Stack[sp] = reg_val;	 // Store value at current SP
 	vm_set_register(vm, 29, sp + 1); // Increment SP *after* storing
 
-	printf(":: PUSH: sp:%ld, reg: r%u, value: %ld\n", sp, reg, reg_val);
+	// printf(":: PUSH: sp:%ld, reg: r%u, value: %ld\n", sp, reg, reg_val);
 }
 
 void disasm_PUSH(MeatsVM *vm)

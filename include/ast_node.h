@@ -32,4 +32,15 @@ static inline AST_Node *new_ast_node(AST_NodeType type)
 	return node;
 }
 
+static inline const char *astNodeType_name(AST_NodeType type)
+{
+	switch (type)
+	{
+	case AST_INLINE_ASM:
+		return "AST INLINE ASM";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 #endif // ASTNODE_H

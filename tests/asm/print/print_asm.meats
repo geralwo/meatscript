@@ -1,0 +1,12 @@
+asm
+{
+	JMP :main
+	:str
+	"i love meat
+	"
+
+	:main
+	PRINT 1 12 :str
+	MOV r30 0
+	HALT
+}

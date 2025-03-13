@@ -23,6 +23,7 @@
 		"type_traits": "c",
 		"utility": "c",
 		"vm.h": "c",
-		"random": "c"
+		"random": "c",
+		"unistd.h": "c"
 	}
 }

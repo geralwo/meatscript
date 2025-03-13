@@ -76,8 +76,7 @@ void meats_vm_print_asm(MeatsVM *vm)
             disasm_table[opcode](vm);
         else
         {
-            printf("DISASM: Unknown instruction: 0x%.2X at PC=%ld\n", opcode, vm->PC - 1);
-            break;
+            printf("0x%.2X\n", opcode);
         }
     }
     printf("::: ASM END :::\n");

@@ -1,0 +1,37 @@
+asm
+{
+	;DEBUG 1
+	MOV r1 1
+	MOVI r2 2
+	MOVE r3 3
+	PUSH r3
+	POP r4
+	JMPE r4 r3 :JMPNZ
+
+	:JMPNZ
+	ADD r4 1
+	SUBR r4 r3
+	JMPNZ r4 :ADD
+
+	:ADD
+	ADD r4 3
+	SUB r4 4
+	JMPZ r4 :MUL
+
+	:MUL
+	MOV r4 2
+	MUL r4 2
+	MOVER r5 r4
+	SUB r5 3
+	DIV r4 4
+	JMPE r4 r5 :OK
+	
+	:FAIL
+	MOV r30 1
+	HALT
+
+	:OK
+	MOV r30 0
+	HALT
+	
+}

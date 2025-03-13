@@ -13,12 +13,13 @@
 ASM_Label asm_labels[ASM_LABEL_CAP] = {0};
 size_t asm_label_count = 0; // Track number of labels
 
-void asm_parser_init(ASM_Parser *asm_parser, MeatsArray *asm_tokens)
+void asm_parser_init(ASM_Parser *asm_parser, MeatsArray *asm_tokens, MeatsArray *labels)
 {
 	asm_parser->Position = 0;
 	asm_parser->Line = 1;
 	asm_parser->Bytecode = new_bytecode();
 	asm_parser->Tokens = asm_tokens;
+	asm_parser->Labels = labels;
 }
 void asm_parser_free(ASM_Parser *asm_parser)
 {
@@ -91,6 +92,7 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 			label.name = copy_string(t->Value);
 			label.position = bytecode_position;
 			asm_labels[asm_label_count++] = label;
+			meats_array_add(asm_parser->Labels, &label);
 			// printf("Found Label at %ld: '%s' -> %ld\n", t->line, label.name, label.position);
 		}
 		// if current token is ; skip all tokens up to eol
@@ -121,6 +123,11 @@ void asm_parser_preprocessor(ASM_Parser *asm_parser)
 		{
 			if (word_size > 0)
 				word_size -= 1;
+		}
+		// strings
+		else if (t->Type == TOKEN_STRING)
+		{
+			bytecode_position += strlen(t->Value);
 		}
 		bytecode_position += get_instr_size(t->Value);
 		// printf("Skipping %ld words for '%s' on line %ld | bytecode pos: %ld\n", word_size, t->Value, t->line, bytecode_position);
@@ -356,19 +363,39 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		{
 			bytecode_append(asm_parser->Bytecode, bytecode_HALT(), HALT_INSTR_SIZE);
 		}
+		else if (strcmp("PRINT", t->Value) == 0)
+		{
+			Token *fdt = eat_asm_token(asm_parser);
+			Token *sizet = eat_asm_token(asm_parser);
+			Token *addrt = eat_asm_token(asm_parser);
+			uint64_t fd = str_to_uint64(fdt->Value);
+			uint64_t addr;
+			if (addrt->Type == TOKEN_SYMBOL)
+			{
+				// printf(":: getting label value '%s': %ld\n", addrt->Value, get_addr_from_label(addrt->Value));
+				addr = (uint64_t)get_addr_from_label(addrt->Value);
+			}
+			else
+			{
+				addr = str_to_uint64(addrt->Value);
+			}
+			uint64_t size = str_to_uint64(sizet->Value);
+			bytecode_append(asm_parser->Bytecode, bytecode_PRINT(fd, addr, size), PRINT_INSTR_SIZE);
+		}
 		else if (strcmp("NOP", t->Value) == 0)
 		{
 			bytecode_append(asm_parser->Bytecode, bytecode_NOP(), NOP_INSTR_SIZE);
 		}
-		else if (strcmp(":", t->Value) == 0)
-		{
-			// printf("ignoring label\n");
-			eat_asm_token(asm_parser);
-		}
 		else if (t->Type == TOKEN_SYMBOL)
 		{
 			// printf("ignoring label\n");
-			eat_asm_token(asm_parser);
+			// eat_asm_token(asm_parser);
+		}
+		else if (t->Type == TOKEN_STRING)
+		{
+			// Token *str = eat_asm_token(asm_parser);
+			bytecode_append(asm_parser->Bytecode, (uint8_t *)t->Value, strlen(t->Value));
+			// bytecode_append(asm_parser->Bytecode, bytecode_NOP(), NOP_INSTR_SIZE);
 		}
 		else if (strcmp(";", t->Value) == 0)
 		{
@@ -397,7 +424,7 @@ void asm_parser_parse(ASM_Parser *asm_parser)
 		}
 		else
 		{
-			printf("ERROR ASM: Unhandled Token '%s' on line %ld!\n", t->Value, t->line);
+			printf("ERROR ASM: Unhandled Token '%s' type %s on line %ld!\n", t->Value, tokenType_name(t->Type), t->line);
 			exit(1);
 		}
 	}

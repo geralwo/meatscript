@@ -95,14 +95,14 @@ void lexer_tokenize(Lexer *lexer)
 		{
 			token = new_token(TOKEN_STRING, lexer->line);
 			char quote = current_char(lexer);
-			int start = lexer->position;
 			lexer_advance(lexer); // eat starting quote
+			int start = lexer->position;
 			while (current_char(lexer) != quote)
 			{
 				lexer_advance(lexer); // eat everything between quotes
 			}
-			lexer_advance(lexer); // eat closing quote
 			token.Value = cut_string(lexer->source, start, lexer->position - start);
+			lexer_advance(lexer); // eat closing quote
 			token.column = lexer->column;
 			meats_array_add(lexer->Tokens, &token);
 		}

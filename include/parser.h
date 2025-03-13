@@ -3,13 +3,14 @@
 
 #include "lexer.h"
 #include "ast_node.h"
+#include "asm_parser.h"
 
 typedef struct
 {
-	Lexer *Lexer;
 	size_t position;
+	Lexer *Lexer;
 	MeatsArray *AST;
-	MeatsArray *Names;
+	MeatsArray *Labels;
 } Parser;
 
 void parser_init(Parser *parser, Lexer *lexer);

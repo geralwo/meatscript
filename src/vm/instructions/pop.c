@@ -18,7 +18,7 @@ void execute_POP(MeatsVM *vm)
 	vm_set_register(vm, 29, sp);
 	vm_set_register(vm, reg, result);
 
-	printf(":: POP: sp:%ld, reg: r%u, value: %ld\n", sp, reg, result);
+	// printf(":: POP: sp:%ld, reg: r%u, value: %ld\n", sp, reg, result);
 }
 
 void disasm_POP(MeatsVM *vm)
