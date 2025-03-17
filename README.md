@@ -8,49 +8,24 @@ var planet = read_line
 printn "$str ${planet.trim}"
 ```
 
-### Todo:
-
-
-- Full implementation of instruction set [⭕]
-	- Data Manipulation
-		- MOV  	[✅]
-		- MOVI  [✅]
-		- MOVE  [✅]
-		- MOVER [✅]
-
-	- Arithmetic 	[⭕]
-		- ADD 	[✅]
-		- SUB 	[✅]
-		- MUL 	[✅]
-		- DIV 	[✅]
-		- MOD 	[✅]
-		- ADDR	[✅]
-		- SUBR 	[✅]
-		- MULR 	[✅]
-		- DIVR 	[✅]
-		- MODR 	[✅]
-		- ADDF 	[❌]
-		- SUBF 	[❌]
-		- MULF 	[❌]
-		- DIVF 	[❌]
-		- MODF 	[❌]
-	- Jump [✅]
-		- JMP [✅]
-		- JMPZ [✅]
-		- JMPNZ [✅]
-		- JMPE [✅]
-	- Function Calls [❌]
-   	- Stack Manipulation [✅]
-		- PUSH [✅]
-		- POP  [✅]
-	- IO [⭕]
-		- PRINT [✅]
-		- SCAN  [❌]
-
-
-- ASM Parser [✅]
-	- ASM Labels :LABEL [✅]
-	- Comment Token ';' [✅]
+# Todos
+## VM
+- Memory Management [❌]
+### Instructions
+- ADDF 	[❌]
+- SUBF 	[❌]
+- MULF 	[❌]
+- DIVF 	[❌]
+- MODF 	[❌]
+- JMPLT [❌]
+- JMPGT [❌]
+- JMPLTE [❌]
+- JMPGTE [❌]
+- Function Calls [❌]
+- IO [⭕]
+	- PRINT [✅]
+	- SCAN  [❌]
+## Backend
 - Parser [⭕]
    	- Keywords [⭕]
    	  	- asm [✅]
