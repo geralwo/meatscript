@@ -3,10 +3,9 @@
 
 ## example hello world:
 ```
-const str = "hello "
-var name = io.read_line
-name.strip! '\n'
-printn "hello $name"
+const str = "hello"
+var planet = read_line
+printn "$str ${planet.trim}"
 ```
 
 ### Todo:
