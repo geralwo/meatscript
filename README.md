@@ -1,4 +1,4 @@
-# meats
+# meatscript
 ## mobile, easy and typed scripting language
 
 ## example hello world:
