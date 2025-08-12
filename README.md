@@ -32,12 +32,12 @@ Constants can be declared by using the `const` keyword `const var number = 3`
 ```
 [#string int] continent_count = 0
 
-var planet = "World"
+var planet ?= ENV("planet") : "World"
 print "Hello $planet!\n"
 
 func ask_continent() -> void:
         print "Which continent are you from?: "
-        var continent = read_line -> String.to_lower() -> String.trim()
+        var continent = read_line(:echo_on) -> String.to_lower() -> String.trim()
         continent_count[continent]+= 1
 end
 
